@@ -46,6 +46,12 @@ const fazTentativa = () => {
 
   const palavraTentativa = estado.tentativaAtual.letras.join("");
 
+  if (palavraTentativa === estado.palavraSemAcentuacao) {
+    alert("ACERTOU! A palavra é " + estado.palavra);
+    estado.tentativaAtual.editavel = false;
+    return;
+  }
+
   // TODO aceitar palavras sem acento ao comparar com palavrasValidas
   if (!palavrasValidas.palavrasValidas.includes(palavraTentativa)) {
     alert("A tentativa precisa constar no dicionário.\n\nTente outra palavra.");
@@ -54,12 +60,8 @@ const fazTentativa = () => {
 
   estado.tentativaAtual.editavel = false;
 
-  if (palavraTentativa === estado.palavraSemAcentuacao) {
-    alert("ACERTOU! A palavra era " + estado.palavra);
-    return;
-  }
-
-  if (estado.tentativas.length >= estado.maxTentativas) {
+  if (estado.tentativas.length == estado.maxTentativas) {
+    alert("Acabaram as tentativas!");
     return;
   }
 
