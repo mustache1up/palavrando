@@ -4,6 +4,7 @@
       PALAVRANDO
     </h1>
     <Tabuleiro :estado="estado" />
+    <button @click="vai" class="rounded-lg bg-indigo-600 mt-6 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">VAI</button>
   </div>
 </template>
 
@@ -14,22 +15,27 @@ import { reactive, provide } from "vue";
 import Tabuleiro from "./components/Tabuleiro.vue";
 
 const estado = reactive({
-  palavra: "ARTIGO",
+  letras: "ARTIGO",
   maxTentativas: 6,
   tentativas: [
     {
-      palavra: ["C", "A", "F", "O", "N", "A"],
-      resultado: ["N", "T", "N", "T", "N", "N"],
-    },{
-      palavra: ["A", "R", "T", "I", "G", "O"],
-      resultado: ["C", "C", "C", "C", "C", "C"],
-    },{
-      palavra: ["", "", "", "", "", ""],
-      resultado: ["", "", "", "", "", ""],
       editavel: true,
-    }
+      letras: ["", "", "", "", "", ""],
+    },
   ]
 });
+
+estado.tentativaAtual = estado.tentativas[0];
+
+const vai = () => {
+  estado.tentativaAtual.editavel = false;
+  const novo = {
+    letras: ["", "", "", "", "", ""],
+    editavel: true,
+  };
+  estado.tentativas.push(novo);
+  estado.tentativaAtual = novo;
+};
 
 provide("estado", estado);
 
