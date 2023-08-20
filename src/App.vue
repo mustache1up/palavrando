@@ -20,6 +20,7 @@ import palavrasValidas from "./assets/palavrasValidas.js";
 
 const estado = reactive({
   palavra: "??????",
+  palavraSemAcentuacao: "??????",
   letrasCerta: [],
   maxTentativas: 20,
   tentativas: []
@@ -33,8 +34,10 @@ const tentativaVazia = () => {
 };
 
 estado.palavra = palavrasValidas.palavrasValidas[Math.floor(Math.random()*palavrasValidas.palavrasValidas.length)];
-estado.palavra = "MANHÃS";
-estado.letrasCerta = estado.palavra.normalize("NFKD").replace(/\p{Diacritic}/gu, "").toUpperCase().split("");
+estado.palavra = estado.palavra.toUpperCase();
+// estado.palavra = "MANHÃS";
+estado.palavraSemAcentuacao = estado.palavra.normalize("NFKD").replace(/\p{Diacritic}/gu, "");
+estado.letrasCerta = estado.palavraSemAcentuacao.split("");
 
 estado.tentativas.push(tentativaVazia());
 estado.tentativaAtual = estado.tentativas[0];
@@ -42,8 +45,8 @@ estado.tentativaAtual = estado.tentativas[0];
 const fazTentativa = () => {
 
   const palavraTentativa = estado.tentativaAtual.letras.join("");
-  const palavraCerta = estado.letrasCerta.join("");
 
+  // TODO aceitar palavras sem acento ao comparar com palavrasValidas
   if (!palavrasValidas.palavrasValidas.includes(palavraTentativa)) {
     alert("A tentativa precisa constar no dicionário.\n\nTente outra palavra.");
     return;
@@ -51,7 +54,7 @@ const fazTentativa = () => {
 
   estado.tentativaAtual.editavel = false;
 
-  if (palavraTentativa === palavraCerta) {
+  if (palavraTentativa === estado.palavraSemAcentuacao) {
     alert("ACERTOU! A palavra era " + estado.palavra);
     return;
   }
