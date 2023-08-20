@@ -1,7 +1,7 @@
 <template>
   <input type="text" :disabled="!editavel"
     @keypress="$event.target.nextElementSibling?.focus()"
-    class="font-extrabold text-4xl h-16 w-16 text-center p-2 m-2
+    class="font-extrabold text-3xl h-14 w-14 text-center m-[2px]
              text-stone-800 border-4 border-stone-900 rounded-xl" 
     :class="{'bg-white': editavel || letra.resultado === '',
             'bg-gray-400': !editavel && letra.resultado === 'N', 
