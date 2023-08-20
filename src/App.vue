@@ -19,8 +19,8 @@ import Tabuleiro from "./components/Tabuleiro.vue";
 import palavrasValidas from "./assets/palavrasValidas.js";
 
 const estado = reactive({
-  palavra: "ARTIGO",
-  maxTentativas: 6,
+  palavra: "??????",
+  maxTentativas: 20,
   tentativas: []
 });
 
@@ -31,18 +31,23 @@ const tentativaVazia = () => {
   };
 };
 
+estado.palavra = palavrasValidas.palavrasValidas[Math.floor(Math.random()*palavrasValidas.palavrasValidas.length)];
+
 estado.tentativas.push(tentativaVazia());
 estado.tentativaAtual = estado.tentativas[0];
 
 const fazTentativa = () => {
-  if (!palavrasValidas.palavrasValidas.includes(estado.tentativaAtual.letras.join(""))) {
+
+  const palavraTentativa = estado.tentativaAtual.letras.join("");
+
+  if (!palavrasValidas.palavrasValidas.includes(palavraTentativa)) {
     alert("A tentativa precisa constar no dicionário.\n\nTente outra palavra.");
     return;
   }
 
   estado.tentativaAtual.editavel = false;
 
-  if (estado.tentativaAtual.letras.join("") === estado.palavra) {
+  if (palavraTentativa === estado.palavra) {
     alert("ACERTOU!");
     return;
   }
