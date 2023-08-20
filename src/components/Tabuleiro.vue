@@ -3,10 +3,9 @@
 </template>
 
 <script setup>
-import { inject } from "vue";
+import { defineProps } from "vue";
 import Tentativa from "./Tentativa.vue";
-
-const estado = inject("estado");
+const props = defineProps(["estado"]);
 </script>
 
 <style>

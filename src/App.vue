@@ -1,24 +1,31 @@
 <template>
-  <div class="h-screen w-screen bg-cyan-200 flex flex-col items-center justify-center">
-    <h1 class="text-5xl font-extrabold mb-14">
+  <div class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
+    <h1 class="text-5xl font-extrabold mb-14 text-stone-100">
       PALAVRANDO
     </h1>
-    <Tabuleiro />
+    <Tabuleiro :estado="estado" />
   </div>
 </template>
 
 <script setup>
 import _ from "lodash";
-import { reactive, provide } from "vue";
+import { reactive } from "vue";
 
 import Tabuleiro from "./components/Tabuleiro.vue";
 
 const estado = reactive({
   palavra: "ARTIGO",
   max_tentativas: 6,
-  tentativas: ["CAFONA", "ARTIGO", "", "", "", ""]
+  tentativas: [
+    {
+      palavra: "CAFONA",
+      resultado: "NTNTNN",
+    },{
+      palavra: "ARTIGO",
+      resultado: "CCCCCC",
+    }
+  ]
 });
-provide("estado", estado);
 
 </script>
 
