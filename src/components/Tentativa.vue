@@ -34,7 +34,7 @@ const resultado = (letrasTentativa, letrasCerta) => {
 };
 
 const letras = computed(() => {
-  var zip = _.zip(props.tentativa.letras, resultado(props.tentativa.letras, estado.palavra.split("")));
+  var zip = _.zip(props.tentativa.letras, resultado(props.tentativa.letras, [...estado.letrasCerta]));
   var letras = _.map(zip, ([caractere, resultado]) => {
     return {caractere, resultado};
   });

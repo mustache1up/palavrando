@@ -20,6 +20,7 @@ import palavrasValidas from "./assets/palavrasValidas.js";
 
 const estado = reactive({
   palavra: "??????",
+  letrasCerta: [],
   maxTentativas: 20,
   tentativas: []
 });
@@ -32,6 +33,8 @@ const tentativaVazia = () => {
 };
 
 estado.palavra = palavrasValidas.palavrasValidas[Math.floor(Math.random()*palavrasValidas.palavrasValidas.length)];
+estado.palavra = "MANHÃS";
+estado.letrasCerta = estado.palavra.normalize("NFKD").replace(/\p{Diacritic}/gu, "").toUpperCase().split("");
 
 estado.tentativas.push(tentativaVazia());
 estado.tentativaAtual = estado.tentativas[0];
@@ -39,6 +42,7 @@ estado.tentativaAtual = estado.tentativas[0];
 const fazTentativa = () => {
 
   const palavraTentativa = estado.tentativaAtual.letras.join("");
+  const palavraCerta = estado.letrasCerta.join("");
 
   if (!palavrasValidas.palavrasValidas.includes(palavraTentativa)) {
     alert("A tentativa precisa constar no dicionário.\n\nTente outra palavra.");
@@ -47,8 +51,8 @@ const fazTentativa = () => {
 
   estado.tentativaAtual.editavel = false;
 
-  if (palavraTentativa === estado.palavra) {
-    alert("ACERTOU!");
+  if (palavraTentativa === palavraCerta) {
+    alert("ACERTOU! A palavra era " + estado.palavra);
     return;
   }
 
