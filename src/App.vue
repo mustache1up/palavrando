@@ -4,7 +4,10 @@
       PALAVRANDO
     </h1>
     <Tabuleiro :estado="estado" />
-    <button @click="vai" class="rounded-lg bg-indigo-600 mt-6 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">VAI</button>
+    <button @click="fazTentativa" class="rounded-lg bg-indigo-600 mt-6 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-indigo-500
+                                focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+      VAI
+    </button>
   </div>
 </template>
 
@@ -18,27 +21,38 @@ import palavrasValidas from "./assets/palavrasValidas.js";
 const estado = reactive({
   palavra: "ARTIGO",
   maxTentativas: 6,
-  tentativas: [
-    {
-      editavel: true,
-      letras: ["", "", "", "", "", ""],
-    },
-  ]
+  tentativas: []
 });
 
+const tentativaVazia = () => {
+  return {
+    letras: ["", "", "", "", "", ""],
+    editavel: true,
+  };
+};
+
+estado.tentativas.push(tentativaVazia());
 estado.tentativaAtual = estado.tentativas[0];
 
-const vai = () => {
+const fazTentativa = () => {
   if (!palavrasValidas.palavrasValidas.includes(estado.tentativaAtual.letras.join(""))) {
     alert("A tentativa precisa constar no dicionário.\n\nTente outra palavra.");
     return;
   }
 
   estado.tentativaAtual.editavel = false;
-  const novo = {
-    letras: ["", "", "", "", "", ""],
-    editavel: true,
-  };
+
+  if (estado.tentativaAtual.letras.join("") === estado.palavra) {
+    alert("ACERTOU!");
+    return;
+  }
+
+  if (estado.tentativas.length >= estado.maxTentativas) {
+    return;
+  }
+
+  const novo = tentativaVazia();
+
   estado.tentativas.push(novo);
   estado.tentativaAtual = novo;
 };
