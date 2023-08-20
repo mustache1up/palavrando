@@ -13,9 +13,10 @@ import _ from "lodash";
 import { reactive, provide } from "vue";
 
 import Tabuleiro from "./components/Tabuleiro.vue";
+import palavrasValidas from "./assets/palavrasValidas.js";
 
 const estado = reactive({
-  letras: "ARTIGO",
+  palavra: "ARTIGO",
   maxTentativas: 6,
   tentativas: [
     {
@@ -28,6 +29,11 @@ const estado = reactive({
 estado.tentativaAtual = estado.tentativas[0];
 
 const vai = () => {
+  if (!palavrasValidas.palavrasValidas.includes(estado.tentativaAtual.letras.join(""))) {
+    alert("A tentativa precisa constar no dicionário.\n\nTente outra palavra.");
+    return;
+  }
+
   estado.tentativaAtual.editavel = false;
   const novo = {
     letras: ["", "", "", "", "", ""],

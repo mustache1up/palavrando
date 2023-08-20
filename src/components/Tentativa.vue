@@ -7,8 +7,9 @@
 
 <script setup>
 import _ from "lodash";
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import Letra from "./Letra.vue";
+const estado = inject("estado");
 const props = defineProps(["tentativa"]);
 
 const resultado = (letras, palavraCerta) => {
@@ -36,7 +37,7 @@ const resultado = (letras, palavraCerta) => {
 };
 
 const letras = computed(() => {
-  var zip = _.zip(props.tentativa.letras, resultado(props.tentativa.letras, "ARTIGO"));
+  var zip = _.zip(props.tentativa.letras, resultado(props.tentativa.letras, estado.palavra));
   var letras = _.map(zip, ([caractere, resultado]) => {
     return {caractere, resultado};
   });
