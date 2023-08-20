@@ -9,26 +9,29 @@
 
 <script setup>
 import _ from "lodash";
-import { reactive } from "vue";
+import { reactive, provide } from "vue";
 
 import Tabuleiro from "./components/Tabuleiro.vue";
 
 const estado = reactive({
   palavra: "ARTIGO",
-  max_tentativas: 6,
+  maxTentativas: 6,
   tentativas: [
     {
-      palavra: "CAFONA",
-      resultado: "NTNTNN",
+      palavra: ["C", "A", "F", "O", "N", "A"],
+      resultado: ["N", "T", "N", "T", "N", "N"],
     },{
-      palavra: "ARTIGO",
-      resultado: "CCCCCC",
+      palavra: ["A", "R", "T", "I", "G", "O"],
+      resultado: ["C", "C", "C", "C", "C", "C"],
     },{
-      palavra: "      ",
-      resultado: "      ",
+      palavra: ["", "", "", "", "", ""],
+      resultado: ["", "", "", "", "", ""],
+      editavel: true,
     }
   ]
 });
+
+provide("estado", estado);
 
 </script>
 

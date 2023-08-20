@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-row">
-    <Letra v-for="(letra, letraIndex) in letras" :key="letraIndex" :letra="letra"/>
+    <Letra v-for="(letra, letraIndex) in letras" :key="letraIndex" 
+        :letra="letra" :editavel="tentativa.editavel"/>
   </div>
 </template>
 
@@ -12,7 +13,12 @@ const props = defineProps(["tentativa"]);
 
 const resultado = (palavra, palavraCerta) => {
   var resultado = [];  
-  palavra.split("").forEach((caractere, index) => {
+  palavra.forEach((caractere, index) => {
+    if(!caractere) {
+      resultado.push("");
+      return;
+    }
+
     if(caractere === palavraCerta[index]) {
       resultado.push("C");
       return;
@@ -30,7 +36,7 @@ const resultado = (palavra, palavraCerta) => {
 };
 
 const letras = computed(() => {
-  var zip = _.zip(props.tentativa.palavra.split(""), resultado(props.tentativa.palavra, "ARTIGO"));
+  var zip = _.zip(props.tentativa.palavra, resultado(props.tentativa.palavra, "ARTIGO"));
   var letras = _.map(zip, ([caractere, resultado]) => {
     return {caractere, resultado};
   });
