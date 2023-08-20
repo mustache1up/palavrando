@@ -3,7 +3,6 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
 import Tentativa from "./Tentativa.vue";
 const props = defineProps(["estado"]);
 </script>

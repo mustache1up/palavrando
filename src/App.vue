@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
-    <h1 class="text-5xl font-extrabold mb-14 text-stone-100">
+    <h1 class="text-5xl font-extrabold mb-14 text-stone-200">
       PALAVRANDO
     </h1>
     <Tabuleiro :estado="estado" />
@@ -23,6 +23,9 @@ const estado = reactive({
     },{
       palavra: "ARTIGO",
       resultado: "CCCCCC",
+    },{
+      palavra: "      ",
+      resultado: "      ",
     }
   ]
 });
