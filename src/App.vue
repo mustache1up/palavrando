@@ -8,6 +8,7 @@
                                 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
       VAI
     </button>
+    <Teclado layouts="abc123|xyz456|{space:space}"></Teclado>
   </div>
 </template>
 
@@ -15,6 +16,7 @@
 import _ from "lodash";
 import { reactive, provide } from "vue";
 
+import Teclado from "./components/Teclado.vue";
 import Tabuleiro from "./components/Tabuleiro.vue";
 import palavrasValidas from "./assets/palavrasValidas.js";
 
