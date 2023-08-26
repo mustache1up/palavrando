@@ -4,11 +4,7 @@
       PALAVRANDO
     </h1>
     <Tabuleiro :estado="estado" />
-    <button @click="fazTentativa" class="rounded-lg bg-indigo-600 mt-6 px-3 py-2 text-xl font-semibold text-white shadow-sm hover:bg-indigo-500
-                                focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-      VAI
-    </button>
-    <Teclado layouts="abc123|xyz456|{space:space}"></Teclado>
+    <Teclado class="mt-5" @enviar="fazTentativa"></Teclado>
   </div>
 </template>
 
