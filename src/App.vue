@@ -42,19 +42,16 @@ estado.tentativas.push(tentativaVazia());
 estado.tentativaAtual = estado.tentativas[0];
 
 const backspace = () => {
-  console.log("backspace");
   estado.tentativaAtual.letras[estado.indiceLetraSelecionada] = "";
   estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada - 1, 0, estado.tentativaAtual.letras.length - 1);
 };
 
 const letra = (letra) => {
-  console.log("letra");
   estado.tentativaAtual.letras[estado.indiceLetraSelecionada] = letra;
   estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada + 1, 0, estado.tentativaAtual.letras.length - 1);
 };
 
 watch(() => estado.indiceLetraSelecionada, (newIndice) => {
-  console.log("watch");
   const x = document.getElementsByName("tentativa");
   const tentativaAtual = x[x.length - 1];
   tentativaAtual.children[newIndice].focus();

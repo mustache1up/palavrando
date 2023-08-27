@@ -1,14 +1,18 @@
 <template>
   <div class="flex flex-row">
-    <Letra v-for="(letra, indiceLetra) in letras" :key="indiceLetra" 
-        :letra="letra" :editavel="tentativa.editavel" :indiceLetra="indiceLetra" />
+    <div v-for="(letra, indiceLetra) in letras" :key="indiceLetra" 
+      class="letra font-extrabold text-3xl h-14 w-14 text-center m-[2px]
+        text-stone-800 border-4 border-stone-900 rounded-xl" 
+      :data-selected="tentativa.editavel && estado.indiceLetraSelecionada == indiceLetra ? 1 : 0"
+      :data-status="letra.resultado" 
+      @click="estado.indiceLetraSelecionada=indiceLetra"
+    >{{letra.caractere}}</div>
   </div>
 </template>
 
 <script setup>
 import _ from "lodash";
 import { computed, inject } from "vue";
-import Letra from "./Letra.vue";
 const estado = inject("estado");
 const props = defineProps(["tentativa"]);
 
@@ -44,4 +48,23 @@ const letras = computed(() => {
 </script>
 
 <style>
+.letra[data-selected="1"] {
+  border-color: green;
+}
+
+.letra[data-status='']  {
+  background-color: white;
+}
+
+.letra[data-status='N']  {
+  background-color: gray;
+}
+
+.letra[data-status='T']  {
+  background-color: yellow;
+}
+
+.letra[data-status='C']  {
+  background-color: green;
+}
 </style>

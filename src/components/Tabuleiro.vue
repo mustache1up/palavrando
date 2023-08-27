@@ -12,7 +12,6 @@ const normaliza = (s) => {
 };
 
 const lida = (event) => {
-  console.log(event);
   const normalizado = normaliza(event.key);
   if(normalizado === "BACKSPACE") {
     emit("backspace"); 
