@@ -1,16 +1,15 @@
 <template>
     <div class="keyboard">
-      <div class="keyboard-row" v-for="(row, rowIndex) in buttonRows" :key="rowIndex" :data-keys="row.length">
+      <div class="keyboard-row" v-for="(row, rowIndex) in buttonRows" :key="rowIndex">
         <button
-          v-for="(btn, btnIndex) in row"
-          :key="btnIndex"
+          v-for="(btn, btnIndex) in row" :key="btnIndex"
           class="keyboard-key"
-          :class="{ 'key-lugar-certo': true, 'key-tem': false, 'key-nao-tem': false }" 
+          :data-status="btn.status"
           :data-type="btn.action.name"
           @click.prevent="btn.action.callable"
           @mousedown.prevent=""
         >
-          <span :name="btn.action.name || btn.value">
+          <span>
             {{ btn.value }}
           </span>
         </button>
@@ -23,73 +22,52 @@
     export default {
       data() {
         return {
-          layout: 0,
           lines: [
             "QWERTYUIOP   ",
             "ASDFGHJKL <",
             "ZXCVBNM >"
-          ],
-          pattern: null,
-          maxlength: 0,
-          value: ""
+          ]
         };
       },
   
       computed: {
         buttonRows() {
           return this.lines.map(line => {
-            let stream = line.match(new RegExp("(.)", "g"));
-  
-            let buttonRow = [];
-  
-            stream.forEach(char => {
+            return line.split("").map(char => {
               if (char === " ") {
-                buttonRow.push({
-                  action: { name: "spacer", callable: null },
+                return {
+                  action: { name: "espacador", callable: null },
                   value: null,
-                });
+                };
               } else if (char === ">") {
-                buttonRow.push({
+                return {
                   action: { name: "enviar", callable: this.enviar },
                   value: "enviar",
-                });
+                };
               } else if (char === "<") {
-                buttonRow.push({
+                return  {
                   action: { name: "backspace", callable: this.backspace },
                   value: "<",
-                });
+                };
               } else {
-                buttonRow.push({
-                  action: { name: null, callable: this.append.bind(this, char) },
+                return {
+                  action: { name: null, callable: this.letra.bind(this, char) },
                   value: char,
-                });
+                  status: "correta",
+                };
               }
             });
-  
-            return buttonRow;
           });
         },
-  
-        valid() {
-          return !this.pattern || this.value.match(new RegExp(this.pattern));
-        }
       },
   
       methods: {
-        mutate(value) {
-          if (this.maxlength > 0) {
-            value = value.slice(0, this.maxlength);
-          }
-  
-          this.$emit("input", value);
-        },
-  
-        append(char) {
-          this.mutate(this.value + char);
+        letra(char) {
+          this.$emit("letra", char);
         },
 
         backspace() {
-          this.mutate(this.value.slice(0, this.value.length - 1));
+          this.$emit("backspace");
         },
 
         enviar() {
@@ -130,16 +108,12 @@
       color: #FFF;
       box-shadow: inset 0 1px 4px rgba(#000, 0.1);
     }
-  
-    .keyboard-key[data-type="space"] {
-      min-width: 160px;
-    }  
 
     .keyboard-key[data-type="enviar"] {
       padding: 0 8px;
     }  
 
-    .keyboard-key[data-type="spacer"] {
+    .keyboard-key[data-type="espacador"] {
       min-width: 2px;
       width: 2px;
       padding: 0;
@@ -147,7 +121,7 @@
       color: none;
     }
 
-    .keyboard-key-lugar-certo {
+    .keyboard-key[data-status="correta"] {
       background: #7F7;
       color: #000;
     }
