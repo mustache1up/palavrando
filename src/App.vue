@@ -10,11 +10,12 @@
 
 <script setup>
 import _ from "lodash";
-import { reactive, provide, watch, ref } from "vue";
+import { reactive, provide, watch } from "vue";
 
 import Teclado from "./components/Teclado.vue";
 import Tabuleiro from "./components/Tabuleiro.vue";
 import palavrasValidas from "./assets/palavrasValidas.js";
+import normaliza from "./assets/normaliza.js";
 
 const estado = reactive({
   palavra: "??????",
@@ -34,11 +35,12 @@ const tentativaVazia = () => {
 
 estado.palavra = palavrasValidas.palavrasValidas[Math.floor(Math.random()*palavrasValidas.palavrasValidas.length)];
 estado.palavra = estado.palavra.toUpperCase();
-// estado.palavra = "MANHÃS";
-estado.palavraSemAcentuacao = estado.palavra.normalize("NFKD").replace(/\p{Diacritic}/gu, "");
-estado.letrasCerta = estado.palavraSemAcentuacao.split("");
+estado.palavra = "SACRAS";
+estado.palavraSemAcentuacao = normaliza(estado.palavra);
+estado.indiceLetraSelecionada = 0;
 
 estado.tentativas.push(tentativaVazia());
+estado.tentativaAtual = estado.tentativas[0];
 estado.tentativaAtual = estado.tentativas[0];
 
 const backspace = () => {
@@ -51,26 +53,29 @@ const letra = (letra) => {
   estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada + 1, 0, estado.tentativaAtual.letras.length - 1);
 };
 
-watch(() => estado.indiceLetraSelecionada, (newIndice) => {
+watch(() => estado.indiceLetraSelecionada, (indice) => {
   const x = document.getElementsByName("tentativa");
   const tentativaAtual = x[x.length - 1];
-  tentativaAtual.children[newIndice].focus();
+  tentativaAtual.children[indice].focus(); // TODO: focar ao iniciar
 }, {
-  flush: "post"
+  flush: "post",
 });
 
 const fazTentativa = () => {
 
   const palavraTentativa = estado.tentativaAtual.letras.join("");
 
-  if (palavraTentativa === estado.palavraSemAcentuacao) {
-    alert("ACERTOU! A palavra é " + estado.palavra);
-    estado.tentativaAtual.editavel = false;
+  if (estado.tentativaAtual.letras.includes("")) {
     return;
   }
 
-  // TODO aceitar palavras sem acento ao comparar com palavrasValidas
-  if (!palavrasValidas.palavrasValidas.includes(palavraTentativa)) {
+  if (palavraTentativa === estado.palavraSemAcentuacao) {
+    alert("ACERTOU! A palavra é " + estado.palavra);
+    estado.tentativaAtual.editavel = false; // TODO: nao pode ser editaval depois de acertar
+    return;
+  }
+
+  if (!palavrasValidas.palavrasValidas.map((s) => normaliza(s)).includes(palavraTentativa)) {
     alert("A tentativa precisa constar no dicionário.\n\nTente outra palavra.");
     return;
   }

@@ -4,12 +4,10 @@
 
 <script setup>
 import Tentativa from "./Tentativa.vue";
-const props = defineProps(["tentativas"]);
-const emit = defineEmits("letra, enviar");
+import normaliza from "../assets/normaliza.js";
 
-const normaliza = (s) => {
-  return s.normalize("NFKD").replace(/\p{Diacritic}/gu, "").toUpperCase();
-};
+const props = defineProps(["tentativas"]);
+const emit = defineEmits(["letra", "enviar", "backspace"]);
 
 const lida = (event) => {
   const normalizado = normaliza(event.key);

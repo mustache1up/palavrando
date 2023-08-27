@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-row">
     <div v-for="(letra, indiceLetra) in letras" :key="indiceLetra" 
-      class="letra font-extrabold text-3xl h-14 w-14 text-center m-[2px]
-        text-stone-800 border-4 border-stone-900 rounded-xl" 
+      class="letra font-extrabold text-3xl h-14 w-14 text-center m-[2px] p-[6px]
+        text-stone-800 border-[3px] border-stone-900 rounded-xl" 
       :data-selected="tentativa.editavel && estado.indiceLetraSelecionada == indiceLetra ? 1 : 0"
       :data-status="letra.resultado" 
       @click="estado.indiceLetraSelecionada=indiceLetra"
@@ -26,10 +26,7 @@ const resultado = (letrasTentativa, letrasCerta) => {
     if(caractere === letrasCerta[index]) {
       resultado[index] = "C";
       letrasCerta[index] = "";
-    }
-  });
-  letrasTentativa.forEach((caractere, index) => {
-    if(letrasCerta.includes(caractere)) {
+    } else if(letrasCerta.includes(caractere)) {
       resultado[index] = "T";
       letrasCerta[letrasCerta.indexOf(caractere)] = "";
     }
@@ -57,14 +54,14 @@ const letras = computed(() => {
 }
 
 .letra[data-status='N']  {
-  background-color: gray;
+  background-color: rgb(130, 130, 130);
 }
 
 .letra[data-status='T']  {
-  background-color: yellow;
+  background-color: rgb(255, 252, 71);
 }
 
 .letra[data-status='C']  {
-  background-color: green;
+  background-color: rgb(63, 183, 63);
 }
 </style>

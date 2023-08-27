@@ -15,9 +15,9 @@
 </template>
 
 <script setup>
-import { computed, defineEmits, ref } from "vue";
+import { computed, ref } from "vue";
 
-const emit = defineEmits("letra", "backspace", "enviar");
+const emit = defineEmits(["letra", "backspace", "enviar"]);
 
 const linhasLayout = ref([
   "QWERTYUIOP   ",
