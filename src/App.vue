@@ -3,7 +3,7 @@
     <h1 class="text-5xl font-extrabold mb-14 text-stone-200">
       PALAVRANDO
     </h1>
-    <Tabuleiro :estado="estado" />
+    <Tabuleiro :tentativas="estado.tentativas" @letra="letra" @enviar="fazTentativa" />
     <Teclado class="mt-5" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
   </div>
 </template>
@@ -44,13 +44,13 @@ estado.tentativaAtual = estado.tentativas[0];
 const backspace = () => {
   console.log("backspace");
   estado.tentativaAtual.letras[estado.indiceLetraSelecionada] = "";
-  estado.indiceLetraSelecionada = estado.indiceLetraSelecionada > 0 ? estado.indiceLetraSelecionada - 1 : 0;
+  estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada - 1, 0, estado.tentativaAtual.letras.length - 1);
 };
 
 const letra = (letra) => {
   console.log("letra");
   estado.tentativaAtual.letras[estado.indiceLetraSelecionada] = letra;
-  estado.indiceLetraSelecionada = estado.indiceLetraSelecionada < estado.tentativaAtual.letras.length - 1 ? estado.indiceLetraSelecionada + 1 : estado.tentativaAtual.letras.length - 1;
+  estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada + 1, 0, estado.tentativaAtual.letras.length - 1);
 };
 
 watch(() => estado.indiceLetraSelecionada, (newIndice) => {
@@ -58,6 +58,8 @@ watch(() => estado.indiceLetraSelecionada, (newIndice) => {
   const x = document.getElementsByName("tentativa");
   const tentativaAtual = x[x.length - 1];
   tentativaAtual.children[newIndice].focus();
+}, {
+  flush: 'post'
 });
 
 const fazTentativa = () => {
@@ -87,6 +89,7 @@ const fazTentativa = () => {
 
   estado.tentativas.push(novo);
   estado.tentativaAtual = novo;
+  estado.indiceLetraSelecionada = 0;
 };
 
 provide("estado", estado);

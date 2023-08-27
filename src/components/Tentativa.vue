@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row">
     <Letra v-for="(letra, indiceLetra) in letras" :key="indiceLetra" 
-        :letra="letra" :editavel="tentativa.editavel" :indiceLetra="indiceLetra"/>
+        :letra="letra" :editavel="tentativa.editavel" :indiceLetra="indiceLetra" />
   </div>
 </template>
 
