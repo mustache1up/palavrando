@@ -5,7 +5,7 @@
         class="teclado-tecla"
         :data-status="tecla.status"
         :data-type="tecla.tipo"
-        @click.prevent="tecla.action"
+        @click.prevent="tecla.acao"
         @mousedown.prevent=""
       >
         {{ tecla.texto }}
@@ -29,20 +29,20 @@
     computed: {
       buttonRows() {
         return this.linhasLayout.map(linhaTeclas => {
-          return linhaTeclas.split("").map(caractere => {
-            if (caractere === " ") {
+          return linhaTeclas.split("").map(letra => {
+            if (letra === " ") {
               return {
                 tipo: "espacador",
                 acao: null,
                 texto: null,
               };
-            } else if (caractere === ">") {
+            } else if (letra === ">") {
               return {
                 tipo: "enviar",
                 acao: this.enviar,
                 texto: "enviar",
               };
-            } else if (caractere === "<") {
+            } else if (letra === "<") {
               return  {
                 tipo: "backspace",
                 acao: this.backspace,
@@ -51,8 +51,8 @@
             } else {
               return {
                 tipo: null,
-                acao: this.letra.bind(this, caractere),
-                texto: caractere,
+                acao: this.letra.bind(this, letra),
+                texto: letra,
                 status: "desconhecido",
               };
             }
@@ -62,8 +62,8 @@
     },
 
     methods: {
-      letra(caractere) {
-        this.$emit("letra", caractere);
+      letra(letra) {
+        this.$emit("letra", letra);
       },
 
       backspace() {
@@ -78,9 +78,7 @@
 </script>
 
 <style>
-  .teclado-linha {
-    padding: 0;
-    margin: 0;
+  .teclado {
     text-align: center;
   }
 

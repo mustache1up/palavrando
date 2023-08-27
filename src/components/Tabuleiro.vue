@@ -1,5 +1,5 @@
 <template>
-  <Tentativa v-for="(tentativa, tentativaIndex) in estado.tentativas" :key="tentativaIndex" :tentativa="tentativa"/>
+  <Tentativa name="tentativa" v-for="(tentativa, tentativaIndex) in estado.tentativas" :key="tentativaIndex" :tentativa="tentativa"/>
 </template>
 
 <script setup>

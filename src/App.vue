@@ -4,13 +4,13 @@
       PALAVRANDO
     </h1>
     <Tabuleiro :estado="estado" />
-    <Teclado class="mt-5" @enviar="fazTentativa"></Teclado>
+    <Teclado class="mt-5" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
   </div>
 </template>
 
 <script setup>
 import _ from "lodash";
-import { reactive, provide } from "vue";
+import { reactive, provide, watch, ref } from "vue";
 
 import Teclado from "./components/Teclado.vue";
 import Tabuleiro from "./components/Tabuleiro.vue";
@@ -21,7 +21,8 @@ const estado = reactive({
   palavraSemAcentuacao: "??????",
   letrasCerta: [],
   maxTentativas: 20,
-  tentativas: []
+  tentativas: [],
+  indiceLetraSelecionada: 0,
 });
 
 const tentativaVazia = () => {
@@ -39,6 +40,25 @@ estado.letrasCerta = estado.palavraSemAcentuacao.split("");
 
 estado.tentativas.push(tentativaVazia());
 estado.tentativaAtual = estado.tentativas[0];
+
+const backspace = () => {
+  console.log("backspace");
+  estado.tentativaAtual.letras[estado.indiceLetraSelecionada] = "";
+  estado.indiceLetraSelecionada = estado.indiceLetraSelecionada > 0 ? estado.indiceLetraSelecionada - 1 : 0;
+};
+
+const letra = (letra) => {
+  console.log("letra");
+  estado.tentativaAtual.letras[estado.indiceLetraSelecionada] = letra;
+  estado.indiceLetraSelecionada = estado.indiceLetraSelecionada < estado.tentativaAtual.letras.length - 1 ? estado.indiceLetraSelecionada + 1 : estado.tentativaAtual.letras.length - 1;
+};
+
+watch(() => estado.indiceLetraSelecionada, (newIndice) => {
+  console.log("watch");
+  const x = document.getElementsByName("tentativa");
+  const tentativaAtual = x[x.length - 1];
+  tentativaAtual.children[newIndice].focus();
+});
 
 const fazTentativa = () => {
 
