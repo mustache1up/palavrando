@@ -5,7 +5,7 @@
         class="teclado-tecla"
         :data-status="tecla.status"
         :data-type="tecla.tipo"
-        @click.prevent="tecla.acao"
+        @click.prevent="tecla.acao(tecla)"
         @mousedown.prevent=""
       >
         {{ tecla.texto }}
@@ -14,113 +14,107 @@
   </div>
 </template>
 
-<script>
-  export default {
-    data() {
-      return {
-        linhasLayout: [
-          "QWERTYUIOP   ",
-          "ASDFGHJKL <",
-          "ZXCVBNM >"
-        ]
-      };
-    },
+<script setup>
+import { computed, defineEmits, ref } from "vue";
 
-    computed: {
-      buttonRows() {
-        return this.linhasLayout.map(linhaTeclas => {
-          return linhaTeclas.split("").map(letra => {
-            if (letra === " ") {
-              return {
-                tipo: "espacador",
-                acao: null,
-                texto: null,
-              };
-            } else if (letra === ">") {
-              return {
-                tipo: "enviar",
-                acao: this.enviar,
-                texto: "enviar",
-              };
-            } else if (letra === "<") {
-              return  {
-                tipo: "backspace",
-                acao: this.backspace,
-                texto: "<",
-              };
-            } else {
-              return {
-                tipo: null,
-                acao: this.letra.bind(this, letra),
-                texto: letra,
-                status: "desconhecido",
-              };
-            }
-          });
-        });
-      },
-    },
+const emit = defineEmits("letra", "backspace", "enviar");
 
-    methods: {
-      letra(letra) {
-        this.$emit("letra", letra);
-      },
+const linhasLayout = ref([
+  "QWERTYUIOP   ",
+  "ASDFGHJKL <",
+  "ZXCVBNM >"
+]);
 
-      backspace() {
-        this.$emit("backspace");
-      },
+const buttonRows = computed(() => {
+  return linhasLayout.value.map(linhaTeclas => {
+    return linhaTeclas.split("").map(caractere => {
+      if (caractere === " ") {
+        return {
+          tipo: "espacador",
+          acao: null,
+          texto: null,
+        };
+      } else if (caractere === ">") {
+        return {
+          tipo: "enviar",
+          acao: enviar,
+          texto: "enviar",
+        };
+      } else if (caractere === "<") {
+        return  {
+          tipo: "backspace",
+          acao: backspace,
+          texto: "<",
+        };
+      } else {
+        return {
+          tipo: null,
+          acao: letra,
+          texto: caractere,
+          status: "desconhecido",
+        };
+      }
+    });
+  });
+});
 
-      enviar() {
-        this.$emit("enviar");
-      },
-    }
-  };
+const letra = (tecla) => {
+  emit("letra", tecla.texto);
+};
+
+const backspace = () => {
+  emit("backspace");
+};
+
+const enviar = () => {
+  emit("enviar");
+};
 </script>
 
 <style>
-  .teclado {
-    text-align: center;
-  }
+.teclado {
+  text-align: center;
+}
 
-  .teclado-tecla {
-    border: none;
-    outline: none;
-    padding: 1px;
-    min-height: 40px;
-    min-width: 25px;
-    margin: 0 2px;
-    background: #EEE;
-    color: #666;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    border-radius: 2px;
-  }
+.teclado-tecla {
+  border: none;
+  outline: none;
+  padding: 1px;
+  min-height: 40px;
+  min-width: 25px;
+  margin: 0 2px;
+  background: #EEE;
+  color: #666;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  border-radius: 2px;
+}
 
-  .teclado-tecla:hover {
-    background: #E0E0E0;
-  }
+.teclado-tecla:hover {
+  background: #E0E0E0;
+}
 
-  .teclado-tecla:active {
-    background: #777;
-    color: #FFF;
-    box-shadow: inset 0 1px 4px rgba(#000, 0.1);
-  }
+.teclado-tecla:active {
+  background: #777;
+  color: #FFF;
+  box-shadow: inset 0 1px 4px rgba(#000, 0.1);
+}
 
-  .teclado-tecla[data-type="enviar"] {
-    padding: 0 8px;
-  }  
+.teclado-tecla[data-type="enviar"] {
+  padding: 0 8px;
+}  
 
-  .teclado-tecla[data-type="espacador"] {
-    min-width: 2px;
-    width: 2px;
-    padding: 0;
-    background: none;
-    color: none;
-  }
+.teclado-tecla[data-type="espacador"] {
+  min-width: 2px;
+  width: 2px;
+  padding: 0;
+  background: none;
+  color: none;
+}
 
-  .teclado-tecla[data-status="correta"] {
-    background: #7F7;
-    color: #000;
-  }
+.teclado-tecla[data-status="correta"] {
+  background: #7F7;
+  color: #000;
+}
 </style>
