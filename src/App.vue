@@ -3,7 +3,7 @@
     <h1 class="text-5xl font-extrabold mb-14 text-stone-200">
       PALAVRANDO
     </h1>
-    <Tabuleiro :tentativas="estado.tentativas" @letra="letra" @enviar="fazTentativa" />
+    <Tabuleiro :tentativas="estado.tentativas" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
     <Teclado class="mt-5" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
   </div>
 </template>
@@ -59,7 +59,7 @@ watch(() => estado.indiceLetraSelecionada, (newIndice) => {
   const tentativaAtual = x[x.length - 1];
   tentativaAtual.children[newIndice].focus();
 }, {
-  flush: 'post'
+  flush: "post"
 });
 
 const fazTentativa = () => {
