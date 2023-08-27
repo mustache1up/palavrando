@@ -1,5 +1,9 @@
 <template>
-  <Tentativa tabIndex={0} name="tentativa" v-for="(tentativa, tentativaIndex) in tentativas" :key="tentativaIndex" :tentativa="tentativa" @keydown.capture.prevent="lida"/>
+  <Tentativa v-for="(tentativa, indiceTentativa) in tentativas" :key="indiceTentativa" 
+    :tentativa="tentativa" :indiceTentativa="indiceTentativa" 
+    tabIndex={0} name="tentativa"
+    @keydown.capture.prevent="lida"
+  />
 </template>
 
 <script setup>

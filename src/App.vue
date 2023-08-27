@@ -21,15 +21,15 @@ const estado = reactive({
   palavra: "??????",
   palavraSemAcentuacao: "??????",
   letrasCerta: [],
-  maxTentativas: 20,
+  maxTentativas: 3,
   tentativas: [],
   indiceLetraSelecionada: 0,
+  indiceTentativaAtual: 0,
 });
 
 const tentativaVazia = () => {
   return {
-    letras: ["", "", "", "", "", ""],
-    editavel: true,
+    letras: new Array(6).fill(""),
   };
 };
 
@@ -37,18 +37,24 @@ estado.palavra = palavrasValidas.palavrasValidas[Math.floor(Math.random()*palavr
 estado.palavra = estado.palavra.toUpperCase();
 estado.palavra = "SACRAS";
 estado.palavraSemAcentuacao = normaliza(estado.palavra);
-estado.indiceLetraSelecionada = 0;
+estado.letrasCerta = estado.palavraSemAcentuacao.split("");
 
-estado.tentativas.push(tentativaVazia());
-estado.tentativaAtual = estado.tentativas[0];
-estado.tentativaAtual = estado.tentativas[0];
+estado.tentativas = Array.from({length: estado.maxTentativas}, () => tentativaVazia());
+estado.tentativaAtual = estado.tentativas[estado.indiceTentativaAtual];
+// estado.tentativaAtual.editavel = true;
 
 const backspace = () => {
+  if (!estado.tentativaAtual) {
+    return;
+  }
   estado.tentativaAtual.letras[estado.indiceLetraSelecionada] = "";
   estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada - 1, 0, estado.tentativaAtual.letras.length - 1);
 };
 
 const letra = (letra) => {
+  if (!estado.tentativaAtual) {
+    return;
+  }
   estado.tentativaAtual.letras[estado.indiceLetraSelecionada] = letra;
   estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada + 1, 0, estado.tentativaAtual.letras.length - 1);
 };
@@ -71,7 +77,8 @@ const fazTentativa = () => {
 
   if (palavraTentativa === estado.palavraSemAcentuacao) {
     alert("ACERTOU! A palavra é " + estado.palavra);
-    estado.tentativaAtual.editavel = false; // TODO: nao pode ser editaval depois de acertar
+    estado.indiceTentativaAtual = -1;
+    estado.tentativaAtual = undefined;
     return;
   }
 
@@ -80,17 +87,15 @@ const fazTentativa = () => {
     return;
   }
 
-  estado.tentativaAtual.editavel = false;
-
-  if (estado.tentativas.length == estado.maxTentativas) {
+  if (estado.indiceTentativaAtual == estado.maxTentativas - 1) {
     alert("Acabaram as tentativas!");
+    estado.indiceTentativaAtual = -1;
+    estado.tentativaAtual = undefined;
     return;
   }
 
-  const novo = tentativaVazia();
-
-  estado.tentativas.push(novo);
-  estado.tentativaAtual = novo;
+  estado.indiceTentativaAtual++; // TODO
+  estado.tentativaAtual = estado.tentativas[estado.indiceTentativaAtual];
   estado.indiceLetraSelecionada = 0;
 };
 

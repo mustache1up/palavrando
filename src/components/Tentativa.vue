@@ -3,7 +3,7 @@
     <div v-for="(letra, indiceLetra) in letras" :key="indiceLetra" 
       class="letra font-extrabold text-3xl h-14 w-14 text-center m-[2px] p-[6px]
         text-stone-800 border-[3px] border-stone-900 rounded-xl" 
-      :data-selected="tentativa.editavel && estado.indiceLetraSelecionada == indiceLetra ? 1 : 0"
+      :data-selected="indiceTentativa === estado.indiceTentativaAtual && estado.indiceLetraSelecionada == indiceLetra ? 1 : 0"
       :data-status="letra.resultado" 
       @click="estado.indiceLetraSelecionada=indiceLetra"
     >{{letra.caractere}}</div>
@@ -14,14 +14,15 @@
 import _ from "lodash";
 import { computed, inject } from "vue";
 const estado = inject("estado");
-const props = defineProps(["tentativa"]);
+const props = defineProps(["tentativa", "indiceTentativa"]);
 
 const resultado = (letrasTentativa, letrasCerta) => {
-  var resultado = ["", "", "", "", "", ""];  
-  if( props.tentativa.editavel ) {
+  var resultado = new Array(6).fill("");  
+  console.log(props.indiceTentativa);
+  console.log(estado.indiceTentativaAtual);
+  if( props.indiceTentativa === estado.indiceTentativaAtual ) {
     return resultado;
   }
-  resultado = ["N", "N", "N", "N", "N", "N"];  
   letrasTentativa.forEach((caractere, index) => {
     if(caractere === letrasCerta[index]) {
       resultado[index] = "C";
@@ -29,6 +30,8 @@ const resultado = (letrasTentativa, letrasCerta) => {
     } else if(letrasCerta.includes(caractere)) {
       resultado[index] = "T";
       letrasCerta[letrasCerta.indexOf(caractere)] = "";
+    } else {
+      resultado[index] = "N";
     }
   });
   return resultado;
