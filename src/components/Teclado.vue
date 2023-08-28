@@ -3,7 +3,7 @@
     <div v-for="(linha, indiceLinha) in buttonRows" :key="indiceLinha" class="teclado-linha">
       <button v-for="(tecla, indiceTecla) in linha" :key="indiceTecla"
         class="teclado-tecla"
-        :data-status="tecla.status"
+        :data-status="tecla.tipo === 'letra' ? statusLetras[tecla.texto] : ''"
         :data-type="tecla.tipo"
         @click.prevent="tecla.acao(tecla)"
         @mousedown.prevent=""
@@ -18,6 +18,7 @@
 import { computed, ref } from "vue";
 
 const emit = defineEmits(["letra", "backspace", "enviar"]);
+const props = defineProps(["statusLetras"]);
 
 const linhasLayout = ref([
   "QWERTYUIOP   ",
@@ -48,7 +49,7 @@ const buttonRows = computed(() => {
         };
       } else {
         return {
-          tipo: null,
+          tipo: "letra",
           acao: letra,
           texto: caractere,
           status: "desconhecido",
@@ -113,8 +114,18 @@ const enviar = () => {
   color: none;
 }
 
-.teclado-tecla[data-status="correta"] {
+.teclado-tecla[data-status="C"] {
   background: #7F7;
+  color: #000;
+}
+
+.teclado-tecla[data-status="T"] {
+  background: rgb(246, 250, 127);
+  color: #000;
+}
+
+.teclado-tecla[data-status="N"] {
+  background: rgb(173, 173, 173);
   color: #000;
 }
 </style>
