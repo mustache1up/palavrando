@@ -10,7 +10,7 @@
 
 <script setup>
 import _ from "lodash";
-import { reactive, provide, watch, computed } from "vue";
+import { reactive, provide, watch, computed, nextTick } from "vue";
 
 import Teclado from "./components/Teclado.vue";
 import Tabuleiro from "./components/Tabuleiro.vue";
@@ -20,7 +20,7 @@ import normaliza from "./assets/normaliza.js";
 const estado = reactive({
   palavra: "??????",
   letrasCerta: [],
-  maxTentativas: 3,
+  maxTentativas: 7,
   tentativas: [],
   indiceLetraSelecionada: 0,
   indiceTentativaAtual: 0,
@@ -31,7 +31,8 @@ provide("estado", estado);
 const tentativaVazia = () => {
   return {
     letras: new Array(6).fill(""),
-    // resultado: new Array(6).fill(""),
+    resultado: new Array(6).fill(""),
+    sacode: new Array(6).fill(false),
   };
 };
 
@@ -50,16 +51,32 @@ const backspace = () => {
   if (!tentativaAtual.value) {
     return;
   }
-  tentativaAtual.value.letras[estado.indiceLetraSelecionada] = "";
-  estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada - 1, 0, tentativaAtual.value.letras.length - 1);
+  const indiceLetraSelecionada = estado.indiceLetraSelecionada;
+  tentativaAtual.value.letras[indiceLetraSelecionada] = "";
+
+  tentativaAtual.value.sacode[indiceLetraSelecionada] = false;
+  nextTick(() => {
+    tentativaAtual.value.sacode[indiceLetraSelecionada] = true;
+  });
+
+  estado.indiceLetraSelecionada = _.clamp(indiceLetraSelecionada - 1, 0, tentativaAtual.value.letras.length - 1);
 };
 
 const letra = (letra) => {
   if (!tentativaAtual.value) {
     return;
   }
-  tentativaAtual.value.letras[estado.indiceLetraSelecionada] = letra;
-  estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada + 1, 0, tentativaAtual.value.letras.length - 1);
+  const indiceLetraSelecionada = estado.indiceLetraSelecionada;
+  tentativaAtual.value.letras[indiceLetraSelecionada] = letra;
+
+  tentativaAtual.value.sacode[indiceLetraSelecionada] = false;
+  nextTick(() => {
+    tentativaAtual.value.sacode[indiceLetraSelecionada] = true;
+  });
+
+  estado.indiceLetraSelecionada = _.clamp(indiceLetraSelecionada + 1, 0, tentativaAtual.value.letras.length - 1);
+
+
 };
 
 watch(() => estado.indiceLetraSelecionada, (indice) => {
@@ -105,6 +122,12 @@ const fazTentativa = () => {
       estado.statusLetras[caractere] = resultado;
       return;
     }
+  });
+
+  const x = tentativaAtual.value;
+  x.sacode = new Array(6).fill(false);
+  nextTick(() => {
+    x.sacode = new Array(6).fill(true);
   });
 
   if (palavraTentativa === palavraSemAcentuacao) {

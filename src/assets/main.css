@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:nth-child(1) {
+  --nth-child-index: 0
+}
+
+:nth-child(2) {
+  --nth-child-index: 1
+}
+
+:nth-child(3) {
+  --nth-child-index: 2
+}
+
+:nth-child(4) {
+  --nth-child-index: 3
+}
+
+:nth-child(5) {
+  --nth-child-index: 4
+}
+
+:nth-child(6) {
+  --nth-child-index: 5
+}
+
+:nth-child(7) {
+  --nth-child-index: 6
+}
+
+:nth-child(8) {
+  --nth-child-index: 7
+}
+
+:nth-child(9) {
+  --nth-child-index: 8
+}
+
+:nth-child(10) {
+  --nth-child-index: 9
+}

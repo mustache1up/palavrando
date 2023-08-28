@@ -84,12 +84,12 @@ const enviar = () => {
   min-height: 40px;
   min-width: 25px;
   margin: 0 2px;
-  background: #EEE;
-  color: #666;
+  background: #111;
+  color: #FFF;
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
-  border-radius: 2px;
+  border-radius: 5px;
 }
 
 .teclado-tecla:hover {
