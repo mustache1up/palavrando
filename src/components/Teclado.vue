@@ -2,7 +2,7 @@
   <div class="teclado">
     <div v-for="(linha, indiceLinha) in buttonRows" :key="indiceLinha" class="teclado-linha">
       <button v-for="(tecla, indiceTecla) in linha" :key="indiceTecla"
-        class="teclado-tecla"
+        class="teclado-tecla font-mplus-extra-bold"
         :data-status="tecla.tipo === 'letra' ? statusLetras[tecla.texto] : ''"
         :data-type="tecla.tipo"
         @click.prevent="tecla.acao(tecla)"
@@ -82,28 +82,17 @@ const enviar = () => {
   outline: none;
   padding: 1px;
   min-height: 40px;
-  min-width: 25px;
+  min-width: 35px;
   margin: 0 2px;
-  background: #111;
-  color: #FFF;
+  background: rgb(59, 59, 59);
+  color: oldlace;
   cursor: pointer;
-  font-family: inherit;
   font-size: inherit;
   border-radius: 5px;
 }
 
-.teclado-tecla:hover {
-  background: #E0E0E0;
-}
-
-.teclado-tecla:active {
-  background: #777;
-  color: #FFF;
-  box-shadow: inset 0 1px 4px rgba(#000, 0.1);
-}
-
 .teclado-tecla[data-type="enviar"] {
-  padding: 0 8px;
+  padding: 0 12px;
 }  
 
 .teclado-tecla[data-type="espacador"] {
@@ -115,17 +104,15 @@ const enviar = () => {
 }
 
 .teclado-tecla[data-status="C"] {
-  background: #7F7;
-  color: #000;
+  background: rgb(52, 147, 52);
 }
 
 .teclado-tecla[data-status="T"] {
-  background: rgb(246, 250, 127);
-  color: #000;
+  background: rgb(160, 134, 19);
 }
 
 .teclado-tecla[data-status="N"] {
-  background: rgb(173, 173, 173);
-  color: #000;
+  background: rgb(35, 35, 35);
+  color: rgb(53, 53, 53);
 }
 </style>

@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "MPlus Black";
+  src: url('./fonts/MPLUSRounded1c-Black.ttf');
+}
+
+.font-mplus-black {
+  font-family: "MPlus Black", Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+@font-face {
+  font-family: "MPlus Extra Bold";
+  src: url('./fonts/MPLUSRounded1c-ExtraBold.ttf');
+}
+
+.font-mplus-extra-bold {
+  font-family: "MPlus Extra Bold", Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
 :nth-child(1) {
   --nth-child-index: 0
 }

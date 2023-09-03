@@ -1,10 +1,10 @@
 <template>
   <div class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
-    <h1 class="text-5xl font-extrabold mb-14 text-stone-200">
+    <h1 class="text-5xl font-extrabold mb-14 text-stone-200 font-mplus-extra-bold">
       PALAVRANDO
     </h1>
     <Tabuleiro :tentativas="estado.tentativas" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
-    <Teclado :statusLetras="estado.statusLetras" class="mt-5" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+    <Teclado :statusLetras="estado.statusLetras" class="mt-14" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
   </div>
 </template>
 
@@ -33,6 +33,7 @@ const tentativaVazia = () => {
     letras: new Array(6).fill(""),
     resultado: new Array(6).fill(""),
     sacode: new Array(6).fill(false),
+    invalida: false,
   };
 };
 
@@ -52,12 +53,8 @@ const backspace = () => {
     return;
   }
   const indiceLetraSelecionada = estado.indiceLetraSelecionada;
-  tentativaAtual.value.letras[indiceLetraSelecionada] = "";
-
-  tentativaAtual.value.sacode[indiceLetraSelecionada] = false;
-  nextTick(() => {
-    tentativaAtual.value.sacode[indiceLetraSelecionada] = true;
-  });
+  tentativaAtual.value.letras[indiceLetraSelecionada] = " ";
+  tentativaAtual.value.sacode[indiceLetraSelecionada] = true;
 
   estado.indiceLetraSelecionada = _.clamp(indiceLetraSelecionada - 1, 0, tentativaAtual.value.letras.length - 1);
 };
@@ -68,20 +65,14 @@ const letra = (letra) => {
   }
   const indiceLetraSelecionada = estado.indiceLetraSelecionada;
   tentativaAtual.value.letras[indiceLetraSelecionada] = letra;
-
-  tentativaAtual.value.sacode[indiceLetraSelecionada] = false;
-  nextTick(() => {
-    tentativaAtual.value.sacode[indiceLetraSelecionada] = true;
-  });
+  tentativaAtual.value.sacode[indiceLetraSelecionada] = true;
 
   estado.indiceLetraSelecionada = _.clamp(indiceLetraSelecionada + 1, 0, tentativaAtual.value.letras.length - 1);
-
-
 };
 
 watch(() => estado.indiceLetraSelecionada, (indice) => {
-  const x = document.getElementsByName("tentativa");
-  const tentativaAtualElement = x[x.length - 1];
+  const tentativaElementList = document.getElementsByName("tentativa");
+  const tentativaAtualElement = tentativaElementList[tentativaElementList.length - 1];
   tentativaAtualElement.children[indice].focus(); // TODO: focar ao iniciar
 }, {
   flush: "post",
@@ -100,16 +91,19 @@ const fazTentativa = () => {
   }
 
   const palavraSemAcentuacao = normaliza(estado.palavra);
+  const tentativaAtualValue = tentativaAtual.value;
 
   if (!palavrasValidas.palavrasValidas.map((s) => normaliza(s)).includes(palavraTentativa)) {
-    alert("A tentativa precisa constar no dicionário.\n\nTente outra palavra.");
+
+    tentativaAtualValue.invalida = true;
+    console.log("A tentativa precisa constar no dicionário. Tente outra palavra.");
     return;
   }
 
-  tentativaAtual.value.resultado = computaResultado(tentativaAtual.value.letras, [...estado.letrasCerta]);
+  tentativaAtualValue.resultado = computaResultado(tentativaAtualValue.letras, [...estado.letrasCerta]);
 
-  tentativaAtual.value.letras.forEach((caractere, indice) => {
-    const resultado = tentativaAtual.value.resultado[indice];
+  tentativaAtualValue.letras.forEach((caractere, indice) => {
+    const resultado = tentativaAtualValue.resultado[indice];
     if(resultado === "C") {
       estado.statusLetras[caractere] = resultado;
       return;
@@ -124,20 +118,16 @@ const fazTentativa = () => {
     }
   });
 
-  const x = tentativaAtual.value;
-  x.sacode = new Array(6).fill(false);
-  nextTick(() => {
-    x.sacode = new Array(6).fill(true);
-  });
+  tentativaAtualValue.sacode = new Array(6).fill(true);
 
   if (palavraTentativa === palavraSemAcentuacao) {
-    alert("ACERTOU! A palavra é " + estado.palavra);
+    console.log("ACERTOU! A palavra é " + estado.palavra);
     estado.indiceTentativaAtual = undefined;
     return;
   }
 
   if (estado.indiceTentativaAtual == estado.maxTentativas - 1) {
-    alert("Acabaram as tentativas!");
+    console.log("Acabaram as tentativas!");
     estado.indiceTentativaAtual = undefined;
     return;
   }
@@ -161,7 +151,6 @@ const computaResultado = (letrasTentativa, letrasCerta) => {
   });
   return resultado;
 };
-
 
 </script>
 
