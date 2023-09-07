@@ -1,16 +1,18 @@
 <template>
-  <div class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
-    <h1 class="text-5xl font-extrabold mb-14 text-stone-200 font-mplus-extra-bold">
-      PALAVRANDO
-    </h1>
-    <Tabuleiro :tentativas="estado.tentativas" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
-    <Teclado :statusLetras="estado.statusLetras" class="mt-14" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+  <div ref="container" class="container h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
+    <div ref="contained" class="contained">
+      <h1 class="text-5xl font-extrabold mb-14 text-stone-200 font-mplus-extra-bold">
+        PALAVRANDO
+      </h1>
+      <Tabuleiro :tentativas="estado.tentativas" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+      <Teclado :statusLetras="estado.statusLetras" class="mt-14" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import _ from "lodash";
-import { reactive, provide, watch, computed, nextTick } from "vue";
+import { reactive, provide, watch, computed, ref, onMounted } from "vue";
 
 import Teclado from "./components/Teclado.vue";
 import Tabuleiro from "./components/Tabuleiro.vue";
@@ -148,7 +150,32 @@ const computaResultado = (letrasTentativa, letrasCerta) => {
   return resultado;
 };
 
+const container = ref(null);
+const contained = ref(null);
+
+onMounted(() => {
+  window.addEventListener("resize", resize);
+  console.log(container);
+  console.log(contained);
+  resize();
+});
+
+const resize = () => {
+  var scale = Math.min(
+    container.value.offsetWidth / contained.value.offsetWidth,
+    container.value.offsetHeight / contained.value.offsetHeight
+  );
+
+  contained.value.style.transform = ("scale(" + scale + ")");
+};
+
 </script>
 
 <style>
+.contained {
+  text-align: center;
+  position: relative;
+  transform: scale(1);
+  transform-origin: center center;
+}
 </style>
