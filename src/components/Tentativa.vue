@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row">
+  <div class="flex flex-row" style="position: relative;">
     <div v-for="(letra, indiceLetra) in letras" :key="indiceLetra" 
       class="letra text-5xl h-16 w-16 text-center m-[2px] p-[5px] font-mplus-black
         text-stone-800 border-[3px] border-stone-900 rounded-md" 
@@ -9,6 +9,17 @@
       @animationend="desligaAnimacoes($event.animationName, tentativa, indiceLetra)"
       @click="estado.indiceLetraSelecionada=indiceLetra"
     >{{letra.caractere}}</div>
+    <lottie-player v-if="tentativa.correta"
+      src="/bla.json"
+      speed="1"
+      autoplay
+      style="width: 400px;
+             height: 400px;
+             bottom: -150px;
+             position: absolute;
+             z-index: 100 0;"
+    >
+    </lottie-player>
   </div>
 </template>
 

@@ -34,6 +34,7 @@ const tentativaVazia = () => {
     resultado: new Array(6).fill(""),
     sacode: new Array(6).fill(false),
     invalida: false,
+    correta: false,
   };
 };
 
@@ -114,6 +115,8 @@ const fazTentativa = () => {
   tentativaAtualValue.sacode = new Array(6).fill(true);
 
   if (palavraTentativa === palavraSemAcentuacao) {
+
+    tentativaAtualValue.correta = true;
     console.log("ACERTOU! A palavra é " + estado.palavra);
     estado.indiceTentativaAtual = undefined;
     return;
