@@ -49,25 +49,18 @@ const tentativaAtual = computed(() => {
 });
 
 const backspace = () => {
-  if (!tentativaAtual.value) {
-    return;
+  if (!tentativaAtual.value.letras[estado.indiceLetraSelecionada]) {
+    estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada - 1, 0, tentativaAtual.value.letras.length - 1);
   }
-  const indiceLetraSelecionada = estado.indiceLetraSelecionada;
-  tentativaAtual.value.letras[indiceLetraSelecionada] = " ";
-  tentativaAtual.value.sacode[indiceLetraSelecionada] = true;
-
-  estado.indiceLetraSelecionada = _.clamp(indiceLetraSelecionada - 1, 0, tentativaAtual.value.letras.length - 1);
+  tentativaAtual.value.letras[estado.indiceLetraSelecionada] = "";
+  tentativaAtual.value.sacode[estado.indiceLetraSelecionada] = true;
 };
 
 const letra = (letra) => {
-  if (!tentativaAtual.value) {
-    return;
-  }
-  const indiceLetraSelecionada = estado.indiceLetraSelecionada;
-  tentativaAtual.value.letras[indiceLetraSelecionada] = letra;
-  tentativaAtual.value.sacode[indiceLetraSelecionada] = true;
+  tentativaAtual.value.letras[estado.indiceLetraSelecionada] = letra;
+  tentativaAtual.value.sacode[estado.indiceLetraSelecionada] = true;
 
-  estado.indiceLetraSelecionada = _.clamp(indiceLetraSelecionada + 1, 0, tentativaAtual.value.letras.length - 1);
+  estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada + 1, 0, tentativaAtual.value.letras.length - 1);
 };
 
 watch(() => estado.indiceLetraSelecionada, (indice) => {
