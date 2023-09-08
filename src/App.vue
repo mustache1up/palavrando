@@ -26,8 +26,8 @@ const estado = reactive({
   letrasCerta: [],
   maxTentativas: 6,
   tentativas: [],
-  indiceLetraSelecionada: 0,
-  indiceTentativaAtual: 0,
+  letraSelecionada: {},
+  tentativaAtual: {},
   statusLetras: {}
 });
 provide("estado", estado);
@@ -56,29 +56,32 @@ estado.palavra = estado.palavra.toUpperCase();
 estado.letrasCerta = normaliza(estado.palavra);
 
 estado.tentativas = Array.from({length: estado.maxTentativas}, () => tentativaVazia());
-
-const tentativaAtual = computed(() => {
-  return estado.tentativas[estado.indiceTentativaAtual];
-});
+estado.tentativaAtual = estado.tentativas[0];
+estado.letraSelecionada = estado.tentativaAtual.letras[0];
 
 const backspace = () => {
-  if (!tentativaAtual.value.letras[estado.indiceLetraSelecionada].caractere) {
-    estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada - 1, 0, tentativaAtual.value.letras.length - 1);
+  if (!estado.letraSelecionada.caractere) {
+    let indice = estado.tentativaAtual.letras.indexOf(estado.letraSelecionada);
+    indice = _.clamp(indice - 1, 0, estado.tentativaAtual.letras.length - 1);
+    estado.letraSelecionada = estado.tentativaAtual.letras[indice];
   }
-  tentativaAtual.value.letras[estado.indiceLetraSelecionada].caractere = "";
-  tentativaAtual.value.letras[estado.indiceLetraSelecionada].animacoes.pulsa = true;
+  estado.letraSelecionada.caractere = "";
+  estado.letraSelecionada.animacoes.pulsa = true;
 };
 
 const letra = (letra) => {
-  tentativaAtual.value.letras[estado.indiceLetraSelecionada].caractere = letra;
-  tentativaAtual.value.letras[estado.indiceLetraSelecionada].animacoes.pulsa = true;
+  estado.letraSelecionada.caractere = letra;
+  estado.letraSelecionada.animacoes.pulsa = true;
 
-  estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada + 1, 0, tentativaAtual.value.letras.length - 1);
+  let indice = estado.tentativaAtual.letras.indexOf(estado.letraSelecionada);
+  indice = _.clamp(indice + 1, 0, estado.tentativaAtual.letras.length - 1);
+  estado.letraSelecionada = estado.tentativaAtual.letras[indice];
 };
 
-watch(() => estado.indiceLetraSelecionada, (indice) => {
+watch(() => estado.letraSelecionada, (letra) => {
   const tentativaElementList = document.getElementsByName("tentativa");
   const tentativaAtualElement = tentativaElementList[tentativaElementList.length - 1];
+  const indice = estado.tentativaAtual.letras.indexOf(letra);
   tentativaAtualElement.children[indice].focus(); // TODO: focar ao iniciar
 }, {
   flush: "post",
@@ -86,15 +89,15 @@ watch(() => estado.indiceLetraSelecionada, (indice) => {
 
 const fazTentativa = () => {
 
-  if (!tentativaAtual.value) {
+  if (!estado.tentativaAtual) {
     return;
   }
 
-  const palavraTentativa = _(tentativaAtual.value.letras).map((letra) => letra.caractere).join("");
+  const palavraTentativa = _(estado.tentativaAtual.letras).map((letra) => letra.caractere).join("");
 
-  if (_.some(tentativaAtual.value.letras, {"caractere": ""})) {
+  if (_.some(estado.tentativaAtual.letras, {"caractere": ""})) {
 
-    tentativaAtual.value.animacoes.invalida = true;
+    estado.tentativaAtual.animacoes.invalida = true;
     console.log("A tentativa ter todas letras preenchidas.");
     return;
   }
@@ -103,14 +106,14 @@ const fazTentativa = () => {
 
   if (!palavrasValidas.palavrasValidas.map((s) => normaliza(s)).includes(palavraTentativa)) {
 
-    tentativaAtual.value.animacoes.invalida = true;
+    estado.tentativaAtual.animacoes.invalida = true;
     console.log("A tentativa precisa constar no dicionário.");
     return;
   }
 
-  computaResultado(tentativaAtual.value);
+  computaResultado(estado.tentativaAtual);
 
-  tentativaAtual.value.letras.forEach(letra => {
+  estado.tentativaAtual.letras.forEach(letra => {
     const caractere = letra.caractere;
     const resultado = letra.resultado;
     if(resultado === "C") {
@@ -127,24 +130,26 @@ const fazTentativa = () => {
     }
   });
 
-  _(tentativaAtual.value.letras).each((letra) => letra.animacoes.pulsa = true);
+  _(estado.tentativaAtual.letras).each((letra) => letra.animacoes.pulsa = true);
 
   if (palavraTentativa === palavraSemAcentuacao) {
 
-    tentativaAtual.value.animacoes.correta = true;
-    console.log("ACERTOU! A palavra é " + estado.palavra);
-    estado.indiceTentativaAtual = undefined;
+    estado.tentativaAtual.animacoes.correta = true;
+    console.log("Você acertou! A palavra é " + estado.palavra);
+    estado.tentativaAtual = undefined;
     return;
   }
 
-  if (estado.indiceTentativaAtual == estado.maxTentativas - 1) {
+  const indiceTentativaAtual = estado.tentativas.indexOf(estado.tentativaAtual);
+
+  if (indiceTentativaAtual == estado.maxTentativas - 1) {
     console.log("Acabaram as tentativas! A palavra é " + estado.palavra);
-    estado.indiceTentativaAtual = undefined;
+    estado.tentativaAtual = undefined;
     return;
   }
 
-  estado.indiceTentativaAtual++;
-  estado.indiceLetraSelecionada = 0;
+  estado.tentativaAtual = estado.tentativas[indiceTentativaAtual + 1];  ;
+  estado.letraSelecionada = estado.tentativaAtual.letras[0];
 };
 
 const computaResultado = (tentativaAtualValue) => {

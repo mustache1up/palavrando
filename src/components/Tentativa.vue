@@ -7,10 +7,10 @@
         animacao__pulsa: letra.animacoes.pulsa, 
         animacao__invalida: tentativa.animacoes.invalida 
       }" 
-      :data-selected="indiceTentativa === estado.indiceTentativaAtual && estado.indiceLetraSelecionada == indiceLetra ? 1 : 0"
-      :data-status="letra.resultado ? letra.resultado : indiceTentativa === estado.indiceTentativaAtual ? '' : 'O'" 
+      :data-selected="estado.letraSelecionada == letra"
+      :data-status="letra.resultado ? letra.resultado : tentativa === estado.tentativaAtual ? '' : 'O'" 
       @animationend="desligaAnimacoes($event.animationName, [tentativa, letra])"
-      @click="estado.indiceLetraSelecionada=indiceLetra"
+      @click="letraClicada(tentativa, letra)"
     >
       {{letra.caractere}}
     </div>
@@ -23,7 +23,7 @@
 import _ from "lodash";
 import {  inject } from "vue";
 const estado = inject("estado");
-const props = defineProps(["tentativa", "indiceTentativa"]);
+const props = defineProps(["tentativa"]);
 
 const desligaAnimacoes = (animationName, objetosParaDesligarAnimacoes) => {
   const animacao = animationName.replace("animacao__", "");
@@ -31,6 +31,12 @@ const desligaAnimacoes = (animationName, objetosParaDesligarAnimacoes) => {
     if(objeto.animacoes?.[animacao]) {
       objeto.animacoes[animacao] = false;
     }
+  }
+};
+
+const letraClicada = (tentativa, letra) => {
+  if (tentativa === estado.tentativaAtual) {
+    estado.letraSelecionada = letra;
   }
 };
 
@@ -49,7 +55,7 @@ const desligaAnimacoes = (animationName, objetosParaDesligarAnimacoes) => {
               border-color 0.25s ease-in-out calc(0.08s * var(--nth-child-index));
 }
 
-.letra[data-selected="1"] {
+.letra[data-selected="true"] {
   border-color: rgba(253, 245, 230, 1);
   animation: blink 2s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
 }
