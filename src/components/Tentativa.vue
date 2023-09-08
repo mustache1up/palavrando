@@ -8,18 +8,10 @@
       :data-status="letra.resultado ? letra.resultado : indiceTentativa === estado.indiceTentativaAtual ? '' : 'O'" 
       @animationend="desligaAnimacoes($event.animationName, tentativa, indiceLetra)"
       @click="estado.indiceLetraSelecionada=indiceLetra"
-    >{{letra.caractere}}</div>
-    <lottie-player v-if="tentativa.correta"
-      src="/bla.json"
-      speed="1"
-      autoplay
-      style="width: 400px;
-             height: 400px;
-             bottom: -150px;
-             position: absolute;
-             z-index: 100 0;"
     >
-    </lottie-player>
+      {{letra.caractere}}
+    </div>
+    <lottie-player v-if="tentativa.correta" class="confetes" src="./bla.json" speed=".8" autoplay></lottie-player>
   </div>
 </template>
 
@@ -133,4 +125,11 @@ const desligaAnimacoes = (animationName, tentativa, indiceLetra) => {
   transition: border-color 0.1s ease-in-out,
 }
 
+.confetes {
+  width: 400px;
+  height: 400px;
+  bottom: -150px;
+  position: absolute;
+  z-index: 100 0;
+}
 </style>
