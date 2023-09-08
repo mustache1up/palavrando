@@ -14,7 +14,7 @@
     >
       {{letra.caractere}}
     </div>
-    <component :is="'lottie-player'" v-if="tentativa.animacoes.correta" class="confetes" src="./bla.json" speed=".8" autoplay>
+    <component :is="'lottie-player'" v-if="tentativa.animacoes.correta" class="confetes" src="./confetes.json.gz" speed=".8" autoplay>
     </component>
   </div>
 </template>

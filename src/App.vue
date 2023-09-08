@@ -138,7 +138,7 @@ const fazTentativa = () => {
   }
 
   if (estado.indiceTentativaAtual == estado.maxTentativas - 1) {
-    console.log("Acabaram as tentativas!");
+    console.log("Acabaram as tentativas! A palavra é " + estado.palavra);
     estado.indiceTentativaAtual = undefined;
     return;
   }
