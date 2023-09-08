@@ -81,7 +81,7 @@ const enviar = () => {
   border: none;
   outline: none;
   padding: 1px;
-  min-height: 40px;
+  min-height: 50px;
   min-width: 35px;
   margin: 0 2px;
   background: rgb(59, 59, 59);

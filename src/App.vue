@@ -1,11 +1,13 @@
 <template>
   <div ref="container" class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
     <div ref="contained" id="contained">
-      <h1 class="text-5xl font-extrabold mb-14 text-stone-200 font-mplus-extra-bold">
+      <h1 class="text-5xl font-extrabold mt-5 mb-8 text-stone-200 font-mplus-extra-bold">
         PALAVRANDO
       </h1>
-      <Tabuleiro :tentativas="estado.tentativas" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
-      <Teclado :statusLetras="estado.statusLetras" class="mt-14" @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+      <Tabuleiro :tentativas="estado.tentativas"
+          @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+      <Teclado :statusLetras="estado.statusLetras" class="mt-8"
+          @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
     </div>
   </div>
 </template>
@@ -22,7 +24,7 @@ import normaliza from "./assets/normaliza.js";
 const estado = reactive({
   palavra: "??????",
   letrasCerta: [],
-  maxTentativas: 7,
+  maxTentativas: 6,
   tentativas: [],
   indiceLetraSelecionada: 0,
   indiceTentativaAtual: 0,
@@ -173,5 +175,6 @@ onMounted(() => {
   position: relative;
   transform: scale(v-bind(scale));
   transform-origin: center center;
+  padding: 8px;
 }
 </style>
