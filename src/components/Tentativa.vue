@@ -1,42 +1,36 @@
 <template>
   <div class="flex flex-row" style="position: relative;">
-    <div v-for="(letra, indiceLetra) in letras" :key="indiceLetra" 
+    <div v-for="(letra, indiceLetra) in tentativa.letras" :key="indiceLetra" 
       class="letra text-5xl h-16 w-16 text-center m-[2px] p-[5px] font-mplus-black
         text-stone-800 border-[3px] border-stone-900 rounded-md" 
-      :class="{ pulse: letra.sacode, invalida: tentativa.invalida }" 
+      :class="{ 
+        animacao__pulsa: letra.animacoes.pulsa, 
+        animacao__invalida: tentativa.animacoes.invalida 
+      }" 
       :data-selected="indiceTentativa === estado.indiceTentativaAtual && estado.indiceLetraSelecionada == indiceLetra ? 1 : 0"
       :data-status="letra.resultado ? letra.resultado : indiceTentativa === estado.indiceTentativaAtual ? '' : 'O'" 
-      @animationend="desligaAnimacoes($event.animationName, tentativa, indiceLetra)"
+      @animationend="desligaAnimacoes($event.animationName, [tentativa, letra])"
       @click="estado.indiceLetraSelecionada=indiceLetra"
     >
       {{letra.caractere}}
     </div>
-    <lottie-player v-if="tentativa.correta" class="confetes" src="./bla.json" speed=".8" autoplay></lottie-player>
+    <component :is="'lottie-player'" v-if="tentativa.animacoes.correta" class="confetes" src="./bla.json" speed=".8" autoplay>
+    </component>
   </div>
 </template>
 
 <script setup>
 import _ from "lodash";
-import { computed, inject } from "vue";
+import {  inject } from "vue";
 const estado = inject("estado");
 const props = defineProps(["tentativa", "indiceTentativa"]);
 
-const letras = computed(() => {
-  var zip = _.zip(props.tentativa.letras, props.tentativa.resultado, props.tentativa.sacode);
-  var letras = _.map(zip, ([caractere, resultado, sacode]) => {
-    return {caractere, resultado, sacode};
-  });
-  return letras;
-});
-
-const desligaAnimacoes = (animationName, tentativa, indiceLetra) => {
-  switch (animationName) {
-    case "pulse":
-      tentativa.sacode[indiceLetra] = false;
-      break;
-    case "treme":
-      tentativa.invalida = false;
-      break;
+const desligaAnimacoes = (animationName, objetosParaDesligarAnimacoes) => {
+  const animacao = animationName.replace("animacao__", "");
+  for(const objeto of objetosParaDesligarAnimacoes) {
+    if(objeto.animacoes?.[animacao]) {
+      objeto.animacoes[animacao] = false;
+    }
   }
 };
 
@@ -77,17 +71,17 @@ const desligaAnimacoes = (animationName, tentativa, indiceLetra) => {
   --tentativa-color: rgb(52, 147, 52);
 }
 
-.letra.pulse {
-  animation: pulse 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+.letra.animacao__pulsa {
+  animation: animacao__pulsa 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   transform: scale(1);
 }
 
-.letra.invalida {
-  animation: treme .3s cubic-bezier(0.36, 0.07, 0.19, 0.97) 2;
+.letra.animacao__invalida {
+  animation: animacao__invalida .3s cubic-bezier(0.36, 0.07, 0.19, 0.97) 2;
   border-color: rgb(192, 34, 34);
 }
 
-@keyframes pulse {
+@keyframes animacao__pulsa {
   50% {
     transform: scale(1.2);
     box-shadow: 0 0 20px var(--tentativa-color);
@@ -95,7 +89,7 @@ const desligaAnimacoes = (animationName, tentativa, indiceLetra) => {
   }
 }
 
-@keyframes treme {
+@keyframes animacao__invalida {
   50% {
     transform: scale(1.03);
     box-shadow: 0 0 20px rgb(192, 34, 34);
@@ -111,16 +105,16 @@ const desligaAnimacoes = (animationName, tentativa, indiceLetra) => {
   }
 }
 
-.pulse:nth-child(n)[data-status=''] {
+.animacao__pulsa:nth-child(n)[data-status=''] {
   animation-delay: 0s;
 }
 
-.pulse:nth-child(n) {
+.animacao__pulsa:nth-child(n) {
   animation-delay: calc(0.08s * var(--nth-child-index));
 }
 
 .letra:nth-child(n)[data-status=''],
-.letra.invalida:nth-child(n) {
+.letra.animacao__invalida:nth-child(n) {
   animation-delay: 0s;
   transition: border-color 0.1s ease-in-out,
 }

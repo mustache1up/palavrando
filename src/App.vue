@@ -34,11 +34,19 @@ provide("estado", estado);
 
 const tentativaVazia = () => {
   return {
-    letras: new Array(6).fill(""),
-    resultado: new Array(6).fill(""),
-    sacode: new Array(6).fill(false),
-    invalida: false,
-    correta: false,
+    letras: Array.from({length: estado.palavra.length}, () => {
+      return {
+        caractere: "",
+        resultado: "",
+        animacoes: {
+          pulsa: false,
+        }
+      };
+    }),
+    animacoes: {
+      invalida: false,
+      correta: false,
+    }
   };
 };
 
@@ -54,16 +62,16 @@ const tentativaAtual = computed(() => {
 });
 
 const backspace = () => {
-  if (!tentativaAtual.value.letras[estado.indiceLetraSelecionada]) {
+  if (!tentativaAtual.value.letras[estado.indiceLetraSelecionada].caractere) {
     estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada - 1, 0, tentativaAtual.value.letras.length - 1);
   }
-  tentativaAtual.value.letras[estado.indiceLetraSelecionada] = "";
-  tentativaAtual.value.sacode[estado.indiceLetraSelecionada] = true;
+  tentativaAtual.value.letras[estado.indiceLetraSelecionada].caractere = "";
+  tentativaAtual.value.letras[estado.indiceLetraSelecionada].animacoes.pulsa = true;
 };
 
 const letra = (letra) => {
-  tentativaAtual.value.letras[estado.indiceLetraSelecionada] = letra;
-  tentativaAtual.value.sacode[estado.indiceLetraSelecionada] = true;
+  tentativaAtual.value.letras[estado.indiceLetraSelecionada].caractere = letra;
+  tentativaAtual.value.letras[estado.indiceLetraSelecionada].animacoes.pulsa = true;
 
   estado.indiceLetraSelecionada = _.clamp(estado.indiceLetraSelecionada + 1, 0, tentativaAtual.value.letras.length - 1);
 };
@@ -82,26 +90,29 @@ const fazTentativa = () => {
     return;
   }
 
-  const palavraTentativa = tentativaAtual.value.letras.join("");
+  const palavraTentativa = _(tentativaAtual.value.letras).map((letra) => letra.caractere).join("");
 
-  if (tentativaAtual.value.letras.includes("")) {
+  if (_.some(tentativaAtual.value.letras, {"caractere": ""})) {
+
+    tentativaAtual.value.animacoes.invalida = true;
+    console.log("A tentativa ter todas letras preenchidas.");
     return;
   }
 
   const palavraSemAcentuacao = normaliza(estado.palavra);
-  const tentativaAtualValue = tentativaAtual.value;
 
   if (!palavrasValidas.palavrasValidas.map((s) => normaliza(s)).includes(palavraTentativa)) {
 
-    tentativaAtualValue.invalida = true;
-    console.log("A tentativa precisa constar no dicionário. Tente outra palavra.");
+    tentativaAtual.value.animacoes.invalida = true;
+    console.log("A tentativa precisa constar no dicionário.");
     return;
   }
 
-  tentativaAtualValue.resultado = computaResultado(tentativaAtualValue.letras, [...estado.letrasCerta]);
+  computaResultado(tentativaAtual.value);
 
-  tentativaAtualValue.letras.forEach((caractere, indice) => {
-    const resultado = tentativaAtualValue.resultado[indice];
+  tentativaAtual.value.letras.forEach(letra => {
+    const caractere = letra.caractere;
+    const resultado = letra.resultado;
     if(resultado === "C") {
       estado.statusLetras[caractere] = resultado;
       return;
@@ -116,11 +127,11 @@ const fazTentativa = () => {
     }
   });
 
-  tentativaAtualValue.sacode = new Array(6).fill(true);
+  _(tentativaAtual.value.letras).each((letra) => letra.animacoes.pulsa = true);
 
   if (palavraTentativa === palavraSemAcentuacao) {
 
-    tentativaAtualValue.correta = true;
+    tentativaAtual.value.animacoes.correta = true;
     console.log("ACERTOU! A palavra é " + estado.palavra);
     estado.indiceTentativaAtual = undefined;
     return;
@@ -136,20 +147,20 @@ const fazTentativa = () => {
   estado.indiceLetraSelecionada = 0;
 };
 
-const computaResultado = (letrasTentativa, letrasCerta) => {
-  var resultado = new Array(6).fill("");  
-  letrasTentativa.forEach((caractere, index) => {
+const computaResultado = (tentativaAtualValue) => {
+  const letrasCerta = [...estado.letrasCerta];
+  tentativaAtualValue.letras.forEach((letra, index) => {
+    const caractere = letra.caractere;
     if(caractere === letrasCerta[index]) {
-      resultado[index] = "C";
+      letra.resultado = "C";
       letrasCerta[index] = "";
     } else if(letrasCerta.includes(caractere)) {
-      resultado[index] = "T";
+      letra.resultado = "T";
       letrasCerta[letrasCerta.indexOf(caractere)] = "";
     } else {
-      resultado[index] = "N";
+      letra.resultado = "N";
     }
   });
-  return resultado;
 };
 
 const container = ref(null);
