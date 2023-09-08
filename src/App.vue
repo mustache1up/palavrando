@@ -1,6 +1,6 @@
 <template>
-  <div ref="container" class="container h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
-    <div ref="contained" class="contained">
+  <div ref="container" class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
+    <div ref="contained" id="contained">
       <h1 class="text-5xl font-extrabold mb-14 text-stone-200 font-mplus-extra-bold">
         PALAVRANDO
       </h1>
@@ -152,30 +152,26 @@ const computaResultado = (letrasTentativa, letrasCerta) => {
 
 const container = ref(null);
 const contained = ref(null);
+const scale = ref(1);
+
+const redimensiona = () => {
+  const widthProportion = container.value.offsetWidth / contained.value.offsetWidth;
+  const heightProportion = container.value.offsetHeight / contained.value.offsetHeight;
+  scale.value = Math.min(widthProportion, heightProportion);
+};
 
 onMounted(() => {
-  window.addEventListener("resize", resize);
-  console.log(container);
-  console.log(contained);
-  resize();
+  window.addEventListener("resize", redimensiona);
+  redimensiona();
 });
-
-const resize = () => {
-  var scale = Math.min(
-    container.value.offsetWidth / contained.value.offsetWidth,
-    container.value.offsetHeight / contained.value.offsetHeight
-  );
-
-  contained.value.style.transform = ("scale(" + scale + ")");
-};
 
 </script>
 
 <style>
-.contained {
+#contained {
   text-align: center;
   position: relative;
-  transform: scale(1);
+  transform: scale(v-bind(scale));
   transform-origin: center center;
 }
 </style>
