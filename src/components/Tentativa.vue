@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row" style="position: relative;">
-    <div v-for="(letra, indiceLetra) in tentativa.letras" :key="indiceLetra" 
+    <div v-for="(letra, indiceLetra) in tentativa.letras" :key="indiceLetra"
       class="letra text-5xl h-16 w-16 text-center m-[2px] p-[5px] font-mplus-black
         text-stone-800 border-[3px] border-stone-900 rounded-md" 
       :class="{ 
@@ -21,7 +21,7 @@
 
 <script setup>
 import _ from "lodash";
-import {  inject } from "vue";
+import { inject } from "vue";
 const estado = inject("estado");
 const props = defineProps(["tentativa"]);
 

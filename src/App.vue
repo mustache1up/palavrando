@@ -14,7 +14,7 @@
 
 <script setup>
 import _ from "lodash";
-import { reactive, provide, watch, computed, ref, onMounted } from "vue";
+import { reactive, provide, ref, onMounted } from "vue";
 
 import Teclado from "./components/Teclado.vue";
 import Tabuleiro from "./components/Tabuleiro.vue";
@@ -61,9 +61,7 @@ estado.letraSelecionada = estado.tentativaAtual.letras[0];
 
 const backspace = () => {
   if (!estado.letraSelecionada.caractere) {
-    let indice = estado.tentativaAtual.letras.indexOf(estado.letraSelecionada);
-    indice = _.clamp(indice - 1, 0, estado.tentativaAtual.letras.length - 1);
-    estado.letraSelecionada = estado.tentativaAtual.letras[indice];
+    alteraLetraSelecionada(-1);
   }
   estado.letraSelecionada.caractere = "";
   estado.letraSelecionada.animacoes.pulsa = true;
@@ -72,20 +70,14 @@ const backspace = () => {
 const letra = (letra) => {
   estado.letraSelecionada.caractere = letra;
   estado.letraSelecionada.animacoes.pulsa = true;
-
-  let indice = estado.tentativaAtual.letras.indexOf(estado.letraSelecionada);
-  indice = _.clamp(indice + 1, 0, estado.tentativaAtual.letras.length - 1);
-  estado.letraSelecionada = estado.tentativaAtual.letras[indice];
+  alteraLetraSelecionada(1);
 };
 
-watch(() => estado.letraSelecionada, (letra) => {
-  const tentativaElementList = document.getElementsByName("tentativa");
-  const tentativaAtualElement = tentativaElementList[tentativaElementList.length - 1];
-  const indice = estado.tentativaAtual.letras.indexOf(letra);
-  tentativaAtualElement.children[indice].focus(); // TODO: focar ao iniciar
-}, {
-  flush: "post",
-});
+const alteraLetraSelecionada = (offset) => {
+  let indice = estado.tentativaAtual.letras.indexOf(estado.letraSelecionada);
+  indice = _.clamp(indice + offset, 0, estado.tentativaAtual.letras.length - 1);
+  estado.letraSelecionada = estado.tentativaAtual.letras[indice];
+};
 
 const fazTentativa = () => {
 
@@ -102,8 +94,6 @@ const fazTentativa = () => {
     return;
   }
 
-  const palavraSemAcentuacao = normaliza(estado.palavra);
-
   if (!palavrasValidas.palavrasValidas.map((s) => normaliza(s)).includes(palavraTentativa)) {
 
     estado.tentativaAtual.animacoes.invalida = true;
@@ -111,26 +101,13 @@ const fazTentativa = () => {
     return;
   }
 
-  computaResultado(estado.tentativaAtual);
+  computaResultado();
 
-  estado.tentativaAtual.letras.forEach(letra => {
-    const caractere = letra.caractere;
-    const resultado = letra.resultado;
-    if(resultado === "C") {
-      estado.statusLetras[caractere] = resultado;
-      return;
-    }
-    if(resultado === "T" && estado.statusLetras[caractere] !== "C") {
-      estado.statusLetras[caractere] = resultado;
-      return;
-    }
-    if(resultado === "N" && ! estado.statusLetras[caractere]) {
-      estado.statusLetras[caractere] = resultado;
-      return;
-    }
-  });
+  atualizaStatusLetras();
 
   _(estado.tentativaAtual.letras).each((letra) => letra.animacoes.pulsa = true);
+
+  const palavraSemAcentuacao = normaliza(estado.palavra);
 
   if (palavraTentativa === palavraSemAcentuacao) {
 
@@ -152,9 +129,9 @@ const fazTentativa = () => {
   estado.letraSelecionada = estado.tentativaAtual.letras[0];
 };
 
-const computaResultado = (tentativaAtualValue) => {
+const computaResultado = () => {
   const letrasCerta = [...estado.letrasCerta];
-  tentativaAtualValue.letras.forEach((letra, index) => {
+  estado.tentativaAtual.letras.forEach((letra, index) => {
     const caractere = letra.caractere;
     if(caractere === letrasCerta[index]) {
       letra.resultado = "C";
@@ -164,6 +141,25 @@ const computaResultado = (tentativaAtualValue) => {
       letrasCerta[letrasCerta.indexOf(caractere)] = "";
     } else {
       letra.resultado = "N";
+    }
+  });
+};
+
+const atualizaStatusLetras = () => {
+  estado.tentativaAtual.letras.forEach(letra => {
+    const caractere = letra.caractere;
+    const resultado = letra.resultado;
+    if(resultado === "C") {
+      estado.statusLetras[caractere] = resultado;
+      return;
+    }
+    if(resultado === "T" && estado.statusLetras[caractere] !== "C") {
+      estado.statusLetras[caractere] = resultado;
+      return;
+    }
+    if(resultado === "N" && ! estado.statusLetras[caractere]) {
+      estado.statusLetras[caractere] = resultado;
+      return;
     }
   });
 };
