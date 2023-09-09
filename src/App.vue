@@ -5,7 +5,8 @@
         PALAVRANDO
       </h1>
       <Tabuleiro :tentativas="estado.tentativas"
-          @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+          @enviar="fazTentativa" @letra="letra" @backspace="backspace"
+          @avanca="avanca" @limpa="limpa" />
       <Teclado :statusLetras="estado.statusLetras" class="mt-8"
           @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
     </div>
@@ -60,19 +61,23 @@ estado.letraSelecionada = estado.tentativaAtual.letras[0];
 
 const backspace = () => {
   if (!estado.letraSelecionada.caractere) {
-    alteraLetraSelecionada(-1);
+    avanca(-1);
   }
-  estado.letraSelecionada.caractere = "";
-  estado.letraSelecionada.animacoes.pulsa = true;
+  limpa();
 };
 
 const letra = (letra) => {
   estado.letraSelecionada.caractere = letra;
   estado.letraSelecionada.animacoes.pulsa = true;
-  alteraLetraSelecionada(1);
+  avanca(1);
 };
 
-const alteraLetraSelecionada = (offset) => {
+const limpa = () => {
+  estado.letraSelecionada.caractere = "";
+  estado.letraSelecionada.animacoes.pulsa = true;
+};
+
+const avanca = (offset) => {
   let indice = estado.tentativaAtual.letras.indexOf(estado.letraSelecionada);
   indice = _.clamp(indice + offset, 0, estado.tentativaAtual.letras.length - 1);
   estado.letraSelecionada = estado.tentativaAtual.letras[indice];
