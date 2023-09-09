@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row" style="position: relative;">
+  <div class="flex flex-row relative">
     <div v-for="(letra, indiceLetra) in tentativa.letras" :key="indiceLetra"
       class="letra text-5xl h-16 w-16 text-center m-[2px] p-[5px] font-mplus-black
         text-stone-800 border-[3px] border-stone-900 rounded-md" 

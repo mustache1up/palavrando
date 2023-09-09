@@ -1,13 +1,13 @@
 <template>
   <div ref="container" class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
-    <div ref="contained" id="contained">
+    <div ref="contained" id="contained" class="p-2 text-center">
       <h1 class="text-5xl font-extrabold mt-5 mb-8 text-stone-200 font-mplus-extra-bold">
         PALAVRANDO
       </h1>
-      <Tabuleiro :tentativas="estado.tentativas"
-          @enviar="fazTentativa" @letra="letra" @backspace="backspace"
-          @avanca="avanca" @limpa="limpa" />
+      <Tabuleiro :tentativas="estado.tentativas" />
       <Teclado :statusLetras="estado.statusLetras" class="mt-8"
+          @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+      <TecladoFisico @avanca="avanca" @limpa="limpa"
           @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
     </div>
   </div>
@@ -18,6 +18,7 @@ import _ from "lodash";
 import { reactive, provide, ref, onMounted } from "vue";
 
 import Teclado from "./components/Teclado.vue";
+import TecladoFisico from "./components/TecladoFisico.vue";
 import Tabuleiro from "./components/Tabuleiro.vue";
 import palavrasValidas from "./assets/palavrasValidas.js";
 import normaliza from "./assets/normaliza.js";
@@ -124,7 +125,7 @@ const fazTentativa = () => {
 
   const indiceTentativaAtual = estado.tentativas.indexOf(estado.tentativaAtual);
 
-  if (indiceTentativaAtual == estado.maxTentativas - 1) {
+  if (indiceTentativaAtual >= estado.maxTentativas - 1) {
     console.log("Acabaram as tentativas! A palavra é " + estado.palavra);
     estado.tentativaAtual = undefined;
     estado.letraSelecionada = undefined;
@@ -189,10 +190,6 @@ onMounted(() => {
 
 <style>
 #contained {
-  text-align: center;
-  position: relative;
   transform: scale(v-bind(scale));
-  transform-origin: center center;
-  padding: 8px;
 }
 </style>
