@@ -56,6 +56,8 @@ estado.tentativas = Array.from({length: estado.maxTentativas}, tentativaVazia);
 estado.tentativaAtual = estado.tentativas[0];
 estado.letraSelecionada = estado.tentativaAtual.letras[0];
 
+const dicionario = _(palavrasValidas).keyBy((s) => normaliza(s));
+
 const backspace = () => {
   if (!estado.letraSelecionada.caractere) {
     avanca(-1);
@@ -95,7 +97,9 @@ const fazTentativa = () => {
     return;
   }
 
-  if (!palavrasValidas.map((s) => normaliza(s)).includes(palavraTentativa)) {
+  const palavraDoDicionario = dicionario.get(palavraTentativa);
+
+  if (!palavraDoDicionario) {
 
     estado.tentativaAtual.animacoes.invalida = true;
     console.log("A tentativa precisa constar no dicionário.");
@@ -106,8 +110,11 @@ const fazTentativa = () => {
 
   atualizaStatusLetras();
 
-  estado.tentativaAtual.letras.forEach((letra) => letra.animacoes.pulsa = true);
-
+  _.zip(estado.tentativaAtual.letras, [...palavraDoDicionario]).forEach(([letra, letraPalavraDicionário]) => {
+    letra.caractere = letraPalavraDicionário;
+    letra.animacoes.pulsa = true;
+  });
+  
   const palavraSemAcentuacao = normaliza(estado.palavra);
 
   if (palavraTentativa === palavraSemAcentuacao) {
