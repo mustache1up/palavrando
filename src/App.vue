@@ -114,6 +114,7 @@ const fazTentativa = () => {
     estado.tentativaAtual.animacoes.correta = true;
     console.log("Você acertou! A palavra é " + estado.palavra);
     estado.tentativaAtual = undefined;
+    estado.letraSelecionada = undefined;
     return;
   }
 
@@ -122,6 +123,7 @@ const fazTentativa = () => {
   if (indiceTentativaAtual == estado.maxTentativas - 1) {
     console.log("Acabaram as tentativas! A palavra é " + estado.palavra);
     estado.tentativaAtual = undefined;
+    estado.letraSelecionada = undefined;
     return;
   }
 
