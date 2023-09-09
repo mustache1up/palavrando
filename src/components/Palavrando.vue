@@ -110,7 +110,7 @@ const fazTentativa = () => {
 
   atualizaStatusLetras();
 
-  _(estado.tentativaAtual.letras).each((letra) => letra.animacoes.pulsa = true);
+  estado.tentativaAtual.letras.forEach((letra) => letra.animacoes.pulsa = true);
 
   const palavraSemAcentuacao = normaliza(estado.palavra);
 
@@ -154,18 +154,16 @@ const computaResultado = () => {
 
 const atualizaStatusLetras = () => {
   estado.tentativaAtual.letras.forEach(letra => {
-    const caractere = letra.caractere;
-    const resultado = letra.resultado;
-    if(resultado === "correta") {
-      estado.statusLetras[caractere] = resultado;
+    if(letra.resultado === "correta") {
+      estado.statusLetras[letra.caractere] = letra.resultado;
       return;
     }
-    if(resultado === "presente" && estado.statusLetras[caractere] !== "correta") {
-      estado.statusLetras[caractere] = resultado;
+    if(letra.resultado === "presente" && estado.statusLetras[letra.caractere] !== "correta") {
+      estado.statusLetras[letra.caractere] = letra.resultado;
       return;
     }
-    if(resultado === "ausente" && ! estado.statusLetras[caractere]) {
-      estado.statusLetras[caractere] = resultado;
+    if(letra.resultado === "ausente" && ! estado.statusLetras[letra.caractere]) {
+      estado.statusLetras[letra.caractere] = letra.resultado;
       return;
     }
   });
