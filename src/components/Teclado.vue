@@ -103,15 +103,15 @@ const enviar = () => {
   color: none;
 }
 
-.teclado-tecla[data-status="C"] {
+.teclado-tecla[data-status="correta"] {
   background: rgb(52, 147, 52);
 }
 
-.teclado-tecla[data-status="T"] {
+.teclado-tecla[data-status="presente"] {
   background: rgb(160, 134, 19);
 }
 
-.teclado-tecla[data-status="N"] {
+.teclado-tecla[data-status="ausente"] {
   background: rgb(35, 35, 35);
   color: rgb(53, 53, 53);
 }

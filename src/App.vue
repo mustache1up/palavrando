@@ -37,7 +37,7 @@ const tentativaVazia = () => {
     letras: Array.from({length: estado.palavra.length}, () => {
       return {
         caractere: "",
-        resultado: "",
+        resultado: "desconhecido",
         animacoes: {
           pulsa: false,
         }
@@ -134,15 +134,15 @@ const fazTentativa = () => {
 const computaResultado = () => {
   const letrasCerta = [...estado.letrasCerta];
   estado.tentativaAtual.letras.forEach((letra, index) => {
-    const caractere = letra.caractere;
-    if(caractere === letrasCerta[index]) {
-      letra.resultado = "C";
+    if(letra.caractere === letrasCerta[index]) {
+      letra.resultado = "correta";
       letrasCerta[index] = "";
-    } else if(letrasCerta.includes(caractere)) {
-      letra.resultado = "T";
-      letrasCerta[letrasCerta.indexOf(caractere)] = "";
-    } else {
-      letra.resultado = "N";
+    }
+  });
+  estado.tentativaAtual.letras.forEach((letra) => {
+    if(letrasCerta.includes(letra.caractere)) {
+      letra.resultado = "presente";
+      letrasCerta[letrasCerta.indexOf(letra.caractere)] = "";
     }
   });
 };
@@ -151,15 +151,15 @@ const atualizaStatusLetras = () => {
   estado.tentativaAtual.letras.forEach(letra => {
     const caractere = letra.caractere;
     const resultado = letra.resultado;
-    if(resultado === "C") {
+    if(resultado === "correta") {
       estado.statusLetras[caractere] = resultado;
       return;
     }
-    if(resultado === "T" && estado.statusLetras[caractere] !== "C") {
+    if(resultado === "presente" && estado.statusLetras[caractere] !== "correta") {
       estado.statusLetras[caractere] = resultado;
       return;
     }
-    if(resultado === "N" && ! estado.statusLetras[caractere]) {
+    if(resultado === "ausente" && ! estado.statusLetras[caractere]) {
       estado.statusLetras[caractere] = resultado;
       return;
     }

@@ -8,13 +8,15 @@
         animacao__invalida: tentativa.animacoes.invalida 
       }" 
       :data-selected="estado.letraSelecionada == letra"
-      :data-status="letra.resultado ? letra.resultado : tentativa === estado.tentativaAtual ? '' : 'O'" 
+      :data-status="tentativa === estado.tentativaAtual ? 'atual' : letra.resultado" 
       @animationend="desligaAnimacoes($event.animationName, [tentativa, letra])"
       @click="letraClicada(tentativa, letra)"
     >
       {{letra.caractere}}
     </div>
-    <Vue3Lottie v-if="tentativa.animacoes.correta" class="confetes" :animationData="Confetes" speed=".8" loop="false"/>
+    <Vue3Lottie v-if="tentativa.animacoes.correta" class="confetes" 
+      :animationData="Confetes" :speed="0.8" :loop="false"
+    />
   </div>
 </template>
 
@@ -62,20 +64,20 @@ const letraClicada = (tentativa, letra) => {
   animation: blink 2s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
 }
 
-.letra[data-status=''] {
+.letra[data-status="atual"] {
   background-color: transparent;
   cursor: pointer;
 }
 
-.letra[data-status='N'] {
+.letra[data-status="ausente"] {
   --tentativa-color:  rgb(98, 98, 98);
 }
 
-.letra[data-status='T'] {
+.letra[data-status="presente"] {
   --tentativa-color:  rgb(160, 134, 19);
 }
 
-.letra[data-status='C'] {
+.letra[data-status="correta"] {
   --tentativa-color: rgb(52, 147, 52);
 }
 
@@ -113,7 +115,7 @@ const letraClicada = (tentativa, letra) => {
   }
 }
 
-.animacao__pulsa:nth-child(n)[data-status=''] {
+.animacao__pulsa:nth-child(n)[data-status="atual"] {
   animation-delay: 0s;
 }
 
@@ -121,7 +123,7 @@ const letraClicada = (tentativa, letra) => {
   animation-delay: calc(0.08s * var(--nth-child-index));
 }
 
-.letra:nth-child(n)[data-status=''],
+.letra:nth-child(n)[data-status="atual"],
 .letra.animacao__invalida:nth-child(n) {
   animation-delay: 0s;
   transition: border-color 0.1s ease-in-out,
