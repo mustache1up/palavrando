@@ -1,27 +1,23 @@
 <template>
-  <div ref="container" class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center">
-    <div ref="contained" id="contained" class="p-2 text-center">
-      <h1 class="text-5xl font-extrabold mt-5 mb-8 text-stone-200 font-mplus-extra-bold">
-        PALAVRANDO
-      </h1>
-      <Tabuleiro :tentativas="estado.tentativas" />
-      <Teclado :statusLetras="estado.statusLetras" class="mt-8"
-          @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
-      <TecladoFisico @avanca="avanca" @limpa="limpa"
-          @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
-    </div>
-  </div>
+  <h1 class="text-5xl font-extrabold mt-5 mb-8 text-stone-200 font-mplus-extra-bold">
+    PALAVRANDO
+  </h1>
+  <Tabuleiro :tentativas="estado.tentativas" />
+  <Teclado :statusLetras="estado.statusLetras" class="mt-8"
+      @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
+  <TecladoFisico @avanca="avanca" @limpa="limpa"
+      @enviar="fazTentativa" @letra="letra" @backspace="backspace" />
 </template>
 
 <script setup>
 import _ from "lodash";
 import { reactive, provide, ref, onMounted } from "vue";
 
-import Teclado from "./components/Teclado.vue";
-import TecladoFisico from "./components/TecladoFisico.vue";
-import Tabuleiro from "./components/Tabuleiro.vue";
-import palavrasValidas from "./assets/palavrasValidas.js";
-import normaliza from "./assets/normaliza.js";
+import Teclado from "@/components/Teclado.vue";
+import TecladoFisico from "@/components/TecladoFisico.vue";
+import Tabuleiro from "@/components/Tabuleiro.vue";
+import palavrasValidas from "@/assets/palavrasValidas.js";
+import normaliza from "@/assets/normaliza.js";
 
 const estado = reactive({
   palavra: "",
@@ -169,25 +165,4 @@ const atualizaStatusLetras = () => {
   });
 };
 
-const container = ref(null);
-const contained = ref(null);
-const scale = ref(1);
-
-const redimensiona = () => {
-  const widthProportion = container.value.offsetWidth / contained.value.offsetWidth;
-  const heightProportion = container.value.offsetHeight / contained.value.offsetHeight;
-  scale.value = Math.min(widthProportion, heightProportion);
-};
-
-onMounted(() => {
-  window.addEventListener("resize", redimensiona);
-  redimensiona();
-});
-
 </script>
-
-<style>
-#contained {
-  transform: scale(v-bind(scale));
-}
-</style>
