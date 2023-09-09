@@ -17,6 +17,7 @@ import Teclado from "@/components/Teclado.vue";
 import TecladoFisico from "@/components/TecladoFisico.vue";
 import Tabuleiro from "@/components/Tabuleiro.vue";
 import palavrasValidas from "@/assets/palavrasValidas.js";
+import palavrasFrequentes from "@/assets/palavrasFrequentes.js";
 import normaliza from "@/assets/normaliza.js";
 
 const estado = reactive({
@@ -49,7 +50,9 @@ const letraVazia = () => {
   };
 };
 
-estado.palavra = palavrasValidas[Math.floor(Math.random()*palavrasValidas.length)];
+const palavrasBoas = _.intersection(palavrasValidas, palavrasFrequentes);
+const indiceAleatorio = Math.floor(Math.random() * palavrasBoas.length);
+estado.palavra = palavrasBoas[indiceAleatorio];
 // estado.palavra = "SACRAS";
 estado.palavra = estado.palavra.toUpperCase();
 estado.tentativas = Array.from({length: estado.maxTentativas}, tentativaVazia);
@@ -141,16 +144,21 @@ const fazTentativa = () => {
 
 const computaResultado = () => {
   const letrasCerta = [...normaliza(estado.palavra)];
-  estado.tentativaAtual.letras.forEach((letra, index) => {
-    if(letra.caractere === letrasCerta[index]) {
+  estado.tentativaAtual.letras.forEach((letra, indiceLetra) => {
+    if(letra.caractere === letrasCerta[indiceLetra]) {
       letra.resultado = "correta";
-      letrasCerta[index] = "";
+      letrasCerta[indiceLetra] = "";
     }
   });
   estado.tentativaAtual.letras.forEach((letra) => {
-    if(letrasCerta.includes(letra.caractere)) {
+    if(letra.resultado === "desconhecido" && letrasCerta.includes(letra.caractere)) {
       letra.resultado = "presente";
       letrasCerta[letrasCerta.indexOf(letra.caractere)] = "";
+    }
+  });
+  estado.tentativaAtual.letras.forEach((letra) => {
+    if(letra.resultado === "desconhecido") {
+      letra.resultado = "ausente";
     }
   });
 };
