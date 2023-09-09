@@ -14,14 +14,16 @@
     >
       {{letra.caractere}}
     </div>
-    <component :is="'lottie-player'" v-if="tentativa.animacoes.correta" class="confetes" src="./confetes.json.gz" speed=".8" autoplay>
-    </component>
+    <Vue3Lottie v-if="tentativa.animacoes.correta" class="confetes" :animationData="Confetes" speed=".8" loop="false"/>
   </div>
 </template>
 
 <script setup>
 import _ from "lodash";
 import { inject } from "vue";
+import { Vue3Lottie } from "vue3-lottie";
+import Confetes from "@/assets/confetes.json";
+
 const estado = inject("estado");
 const props = defineProps(["tentativa"]);
 
@@ -126,8 +128,8 @@ const letraClicada = (tentativa, letra) => {
 }
 
 .confetes {
-  width: 400px;
-  height: 400px;
+  width: 400px !important;
+  height: 400px !important;
   bottom: -150px;
   position: absolute;
   z-index: 100 0;
