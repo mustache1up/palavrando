@@ -12344,6 +12344,4 @@ const palavrasValidas = [
 "ZURROU",
 ];
 
-export default {
-    palavrasValidas
-};
+export default palavrasValidas;

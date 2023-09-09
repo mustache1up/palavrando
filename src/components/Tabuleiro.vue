@@ -25,6 +25,11 @@ const lida = (event) => {
   }
   if(normalizado.match("^[A-Z]$")) {
     emit("letra", normalizado);
+    return;
+  }
+  if(normalizado.match(" ")) {
+    emit("letra", "");
+    return;
   }
 };
 </script>

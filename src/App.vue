@@ -22,8 +22,7 @@ import palavrasValidas from "./assets/palavrasValidas.js";
 import normaliza from "./assets/normaliza.js";
 
 const estado = reactive({
-  palavra: "??????",
-  letrasCerta: [],
+  palavra: "",
   maxTentativas: 6,
   tentativas: [],
   letraSelecionada: {},
@@ -34,15 +33,7 @@ provide("estado", estado);
 
 const tentativaVazia = () => {
   return {
-    letras: Array.from({length: estado.palavra.length}, () => {
-      return {
-        caractere: "",
-        resultado: "desconhecido",
-        animacoes: {
-          pulsa: false,
-        }
-      };
-    }),
+    letras: Array.from({length: estado.palavra.length}, letraVazia),
     animacoes: {
       invalida: false,
       correta: false,
@@ -50,12 +41,20 @@ const tentativaVazia = () => {
   };
 };
 
-estado.palavra = palavrasValidas.palavrasValidas[Math.floor(Math.random()*palavrasValidas.palavrasValidas.length)];
-estado.palavra = estado.palavra.toUpperCase();
-// estado.palavra = "SACRAS";
-estado.letrasCerta = normaliza(estado.palavra);
+const letraVazia = () => {
+  return {
+    caractere: "",
+    resultado: "desconhecido",
+    animacoes: {
+      pulsa: false,
+    }
+  };
+};
 
-estado.tentativas = Array.from({length: estado.maxTentativas}, () => tentativaVazia());
+estado.palavra = palavrasValidas[Math.floor(Math.random()*palavrasValidas.length)];
+// estado.palavra = "SACRAS";
+estado.palavra = estado.palavra.toUpperCase();
+estado.tentativas = Array.from({length: estado.maxTentativas}, tentativaVazia);
 estado.tentativaAtual = estado.tentativas[0];
 estado.letraSelecionada = estado.tentativaAtual.letras[0];
 
@@ -87,14 +86,14 @@ const fazTentativa = () => {
 
   const palavraTentativa = _(estado.tentativaAtual.letras).map((letra) => letra.caractere).join("");
 
-  if (_.some(estado.tentativaAtual.letras, {"caractere": ""})) {
+  if (_(estado.tentativaAtual.letras).some({"caractere": ""})) {
 
     estado.tentativaAtual.animacoes.invalida = true;
     console.log("A tentativa ter todas letras preenchidas.");
     return;
   }
 
-  if (!palavrasValidas.palavrasValidas.map((s) => normaliza(s)).includes(palavraTentativa)) {
+  if (!palavrasValidas.map((s) => normaliza(s)).includes(palavraTentativa)) {
 
     estado.tentativaAtual.animacoes.invalida = true;
     console.log("A tentativa precisa constar no dicionário.");
@@ -132,7 +131,7 @@ const fazTentativa = () => {
 };
 
 const computaResultado = () => {
-  const letrasCerta = [...estado.letrasCerta];
+  const letrasCerta = [...normaliza(estado.palavra)];
   estado.tentativaAtual.letras.forEach((letra, index) => {
     if(letra.caractere === letrasCerta[index]) {
       letra.resultado = "correta";
