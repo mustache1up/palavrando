@@ -11,7 +11,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@firebase/app": "^0.9.15",
+    "@firebase/analytics": "^0.10.7",
+    "@firebase/app": "^0.10.8",
     "@firebase/auth": "^1.1.0",
     "@firebase/database": "^1.0.1",
     "animate.css": "^4.1.1",

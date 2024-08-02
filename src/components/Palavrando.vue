@@ -12,6 +12,7 @@
 <script setup>
 import _ from "lodash";
 import { reactive, provide, ref, onMounted } from "vue";
+import { getAnalytics, logEvent } from "@firebase/analytics";
 
 import Teclado from "@/components/Teclado.vue";
 import TecladoFisico from "@/components/TecladoFisico.vue";
@@ -19,6 +20,7 @@ import Tabuleiro from "@/components/Tabuleiro.vue";
 import palavrasValidas from "@/assets/palavrasValidas.js";
 import palavrasFrequentes from "@/assets/palavrasFrequentes.js";
 import normaliza from "@/assets/normaliza.js";
+const analytics = getAnalytics();
 
 const estado = reactive({
   palavra: "",
@@ -50,6 +52,7 @@ const letraVazia = () => {
   };
 };
 
+logEvent(analytics, "Novo jogo");
 const palavrasBoas = _.intersection(palavrasValidas, palavrasFrequentes);
 const indiceAleatorio = Math.floor(Math.random() * palavrasBoas.length);
 estado.palavra = palavrasBoas[indiceAleatorio];
@@ -97,6 +100,7 @@ const fazTentativa = () => {
 
     estado.tentativaAtual.animacoes.invalida = true;
     console.log("A tentativa ter todas letras preenchidas.");
+    logEvent(analytics, "Tentativa faltando letras");
     return;
   }
 
@@ -106,12 +110,17 @@ const fazTentativa = () => {
 
     estado.tentativaAtual.animacoes.invalida = true;
     console.log("A tentativa precisa constar no dicionário.");
+    logEvent(analytics, "Tentativa nao dicionarizada");
     return;
   }
 
   computaResultado();
 
   atualizaStatusLetras();
+  const letrasCorretas = estado.tentativaAtual.letras.filter(letra => letra.resultado == "correta").length;
+  const letrasPresentes = estado.tentativaAtual.letras.filter(letra => letra.resultado == "presente").length;
+  const letrasAusentes = estado.tentativaAtual.letras.filter(letra => letra.resultado == "ausente").length;
+  logEvent(analytics, "Tentativa realizada", {letrasCorretas, letrasPresentes, letrasAusentes});
 
   _.zip(estado.tentativaAtual.letras, [...palavraDoDicionario]).forEach(([letra, letraPalavraDicionário]) => {
     letra.caractere = letraPalavraDicionário;
@@ -120,19 +129,22 @@ const fazTentativa = () => {
   
   const palavraSemAcentuacao = normaliza(estado.palavra);
 
+  const indiceTentativaAtual = estado.tentativas.indexOf(estado.tentativaAtual);
+
   if (palavraTentativa === palavraSemAcentuacao) {
 
     estado.tentativaAtual.animacoes.correta = true;
     console.log("Você acertou! A palavra é " + estado.palavra);
+    logEvent(analytics, "Acertou a palavra", {tentativas: indiceTentativaAtual + 1});
     estado.tentativaAtual = undefined;
     estado.letraSelecionada = undefined;
     return;
   }
 
-  const indiceTentativaAtual = estado.tentativas.indexOf(estado.tentativaAtual);
 
   if (indiceTentativaAtual >= estado.maxTentativas - 1) {
     console.log("Acabaram as tentativas! A palavra é " + estado.palavra);
+    logEvent(analytics, "Acabaram as tentativas");
     estado.tentativaAtual = undefined;
     estado.letraSelecionada = undefined;
     return;
